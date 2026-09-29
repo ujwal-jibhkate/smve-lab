@@ -1,0 +1,301 @@
+{
+  "baseline": "MaxSim",
+  "quality": {
+    "MaxSim": {
+      "ndcg@1": 0.60333,
+      "ndcg@10": 0.69912,
+      "ndcg@100": 0.72315,
+      "recall@10": 0.81056,
+      "recall@100": 0.92033,
+      "precision@1": 0.60333,
+      "precision@10": 0.09133,
+      "mrr@10": 0.67433,
+      "map@10": 0.65683
+    },
+    "BGE-M3 dense": {
+      "ndcg@1": 0.53,
+      "ndcg@10": 0.65418,
+      "ndcg@100": 0.68005,
+      "recall@10": 0.78511,
+      "recall@100": 0.897,
+      "precision@1": 0.53,
+      "precision@10": 0.088,
+      "mrr@10": 0.6217,
+      "map@10": 0.60603
+    },
+    "BGE-M3 lexical": {
+      "ndcg@1": 0.50667,
+      "ndcg@10": 0.63757,
+      "ndcg@100": 0.66656,
+      "recall@10": 0.76544,
+      "recall@100": 0.898,
+      "precision@1": 0.50667,
+      "precision@10": 0.08533,
+      "mrr@10": 0.60514,
+      "map@10": 0.59003
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical": {
+      "ndcg@1": 0.56333,
+      "ndcg@10": 0.68422,
+      "ndcg@100": 0.70801,
+      "recall@10": 0.81744,
+      "recall@100": 0.92367,
+      "precision@1": 0.56333,
+      "precision@10": 0.092,
+      "mrr@10": 0.6512,
+      "map@10": 0.63552
+    },
+    "SMVE w=65,536 k=32 centered": {
+      "ndcg@1": 0.43,
+      "ndcg@10": 0.54709,
+      "ndcg@100": 0.58438,
+      "recall@10": 0.686,
+      "recall@100": 0.85733,
+      "precision@1": 0.43,
+      "precision@10": 0.07733,
+      "mrr@10": 0.51306,
+      "map@10": 0.49688
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical + MaxSim rerank@100": {
+      "ndcg@1": 0.6033333333333334,
+      "ndcg@10": 0.6976862703816388,
+      "ndcg@100": 0.7232849890299304,
+      "recall@10": 0.8072222222222222,
+      "recall@100": 0.9236666666666667,
+      "precision@1": 0.6033333333333334,
+      "precision@10": 0.09099999999999998,
+      "mrr@10": 0.6735013227513228,
+      "map@10": 0.655994708994709
+    }
+  },
+  "cost": {
+    "MaxSim": {
+      "index build (offline)": 0.0,
+      "online, 300 queries": 27.638,
+      "online per query (batched)": 92.12666666666667,
+      "single-query latency": 535.39,
+      "index size": 3811529216.0
+    },
+    "BGE-M3 dense": {
+      "index build (offline)": 0.0,
+      "online, 300 queries": 0.0037,
+      "online per query (batched)": 0.012333333333333333,
+      "single-query latency": 0.673,
+      "index size": 21229568.0
+    },
+    "BGE-M3 lexical": {
+      "index build (offline)": 0.0,
+      "online, 300 queries": 0.0272,
+      "online per query (batched)": 0.09066666666666666,
+      "single-query latency": 2.279,
+      "index size": 6047432.0
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical": {
+      "index build (offline)": 0.0,
+      "online, 300 queries": 0.0569,
+      "online per query (batched)": 0.18966666666666665,
+      "single-query latency": 2.893,
+      "index size": 27277000.0
+    },
+    "SMVE w=65,536 k=32 centered": {
+      "index build (offline)": 196.6,
+      "online, 300 queries": 0.963,
+      "online per query (batched)": 3.21,
+      "single-query latency": 86.65,
+      "index size": 92816200.0
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical + MaxSim rerank@100": {
+      "index build (offline)": 0.0,
+      "online, 300 queries": 4.154,
+      "online per query (batched)": 13.846666666666666,
+      "single-query latency": 16.55,
+      "index size": 3838806216.0
+    }
+  },
+  "paired": {
+    "BGE-M3 dense": {
+      "ndcg@10": {
+        "mean_delta": -0.044943520397155705,
+        "ci95": [
+          -0.06925718490136105,
+          -0.020910001444107193
+        ],
+        "wins": 34,
+        "ties": 211,
+        "losses": 55,
+        "wilcoxon_p": 0.0001853521894734094
+      },
+      "recall@100": {
+        "mean_delta": -0.023333333333333334,
+        "ci95": [
+          -0.047999999999999994,
+          -0.0006666666666666673
+        ],
+        "wins": 4,
+        "ties": 285,
+        "losses": 11,
+        "wilcoxon_p": 0.0566354255358628
+      }
+    },
+    "BGE-M3 lexical": {
+      "ndcg@10": {
+        "mean_delta": -0.06155569542284648,
+        "ci95": [
+          -0.09505636302130677,
+          -0.029070437427187294
+        ],
+        "wins": 42,
+        "ties": 179,
+        "losses": 79,
+        "wilcoxon_p": 6.342100777865585e-05
+      },
+      "recall@100": {
+        "mean_delta": -0.02233333333333333,
+        "ci95": [
+          -0.051333333333333335,
+          0.005666666666666667
+        ],
+        "wins": 7,
+        "ties": 279,
+        "losses": 14,
+        "wilcoxon_p": 0.13729379487734905
+      }
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical": {
+      "ndcg@10": {
+        "mean_delta": -0.014902718291885322,
+        "ci95": [
+          -0.035141667000867974,
+          0.005435234718631776
+        ],
+        "wins": 34,
+        "ties": 221,
+        "losses": 45,
+        "wilcoxon_p": 0.12895108769046085
+      },
+      "recall@100": {
+        "mean_delta": 0.0033333333333333335,
+        "ci95": [
+          -0.014,
+          0.020666666666666667
+        ],
+        "wins": 5,
+        "ties": 291,
+        "losses": 4,
+        "wilcoxon_p": 0.7265625
+      }
+    },
+    "SMVE w=65,536 k=32 centered": {
+      "ndcg@10": {
+        "mean_delta": -0.1520318274288305,
+        "ci95": [
+          -0.18601421338529975,
+          -0.11928173988978327
+        ],
+        "wins": 16,
+        "ties": 178,
+        "losses": 106,
+        "wilcoxon_p": 2.2538583622727485e-16
+      },
+      "recall@100": {
+        "mean_delta": -0.063,
+        "ci95": [
+          -0.09466666666666666,
+          -0.035
+        ],
+        "wins": 2,
+        "ties": 277,
+        "losses": 21,
+        "wilcoxon_p": 3.6840897370544266e-05
+      }
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical + MaxSim rerank@100": {
+      "ndcg@10": {
+        "mean_delta": -0.0014355885269113078,
+        "ci95": [
+          -0.0043067655807339286,
+          3.885780586188048e-18
+        ],
+        "wins": 18,
+        "ties": 278,
+        "losses": 4,
+        "wilcoxon_p": 0.12608716276117937
+      },
+      "recall@100": {
+        "mean_delta": 0.0033333333333333335,
+        "ci95": [
+          -0.014,
+          0.020666666666666667
+        ],
+        "wins": 5,
+        "ties": 291,
+        "losses": 4,
+        "wilcoxon_p": 0.7265625
+      }
+    }
+  },
+  "fidelity": {
+    "BGE-M3 dense": {
+      "top10_overlap": 0.5983333333333334,
+      "maxsim_top10_in_candidate_top100": 0.9646666666666666,
+      "median_rank_of_maxsim_top1": 1.0,
+      "maxsim_top1_missing_from_top100": 3
+    },
+    "BGE-M3 lexical": {
+      "top10_overlap": 0.4113333333333333,
+      "maxsim_top10_in_candidate_top100": 0.7453333333333334,
+      "median_rank_of_maxsim_top1": 1.0,
+      "maxsim_top1_missing_from_top100": 12
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical": {
+      "top10_overlap": 0.6326666666666666,
+      "maxsim_top10_in_candidate_top100": 0.9793333333333334,
+      "median_rank_of_maxsim_top1": 1.0,
+      "maxsim_top1_missing_from_top100": 2
+    },
+    "SMVE w=65,536 k=32 centered": {
+      "top10_overlap": 0.4816666666666667,
+      "maxsim_top10_in_candidate_top100": 0.8906666666666666,
+      "median_rank_of_maxsim_top1": 1.0,
+      "maxsim_top1_missing_from_top100": 5
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical + MaxSim rerank@100": {
+      "top10_overlap": 0.9793333333333334,
+      "maxsim_top10_in_candidate_top100": 0.9793333333333334,
+      "median_rank_of_maxsim_top1": 1.0,
+      "maxsim_top1_missing_from_top100": 2
+    }
+  },
+  "speed": {
+    "BGE-M3 dense": {
+      "online_speedup": 7469.72972972973,
+      "latency_speedup": 795.5274888558691,
+      "index_size_ratio": 179.5387082770596,
+      "break_even_queries_batched": 0.0
+    },
+    "BGE-M3 lexical": {
+      "online_speedup": 1016.1029411764707,
+      "latency_speedup": 234.92321193505924,
+      "index_size_ratio": 630.272356266263,
+      "break_even_queries_batched": 0.0
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical": {
+      "online_speedup": 485.7293497363797,
+      "latency_speedup": 185.06394745938474,
+      "index_size_ratio": 139.73417956520146,
+      "break_even_queries_batched": 0.0
+    },
+    "SMVE w=65,536 k=32 centered": {
+      "online_speedup": 28.699896157840087,
+      "latency_speedup": 6.178765147143681,
+      "index_size_ratio": 41.06534436876321,
+      "break_even_queries_batched": 2211.0590440487344
+    },
+    "BGE-M3 dense + 0.3\u00b7lexical + MaxSim rerank@100": {
+      "online_speedup": 6.653346172363987,
+      "latency_speedup": 32.349848942598186,
+      "index_size_ratio": 0.9928944055872603,
+      "break_even_queries_batched": 0.0
+    }
+  }
+}
