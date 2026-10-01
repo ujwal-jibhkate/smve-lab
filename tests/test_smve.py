@@ -67,3 +67,23 @@ def test_scores_are_dot_products():
     q = smve_encode(qf, qo, B, 4, True, show_progress=False)
     d = smve_encode(df, do, B, 4, False, show_progress=False)
     np.testing.assert_allclose(smve_scores(q, d), q.toarray() @ d.toarray().T, rtol=1e-5)
+
+
+def test_reps_equal_concatenated_independent_blocks():
+    """R repetitions == R separate SMVE encodings, one per anchor block, side by side."""
+    import scipy.sparse as sp
+    rng = np.random.default_rng(3)
+    R, w, k = 3, 32, 4
+    B = make_anchors(16, R * w, seed=0)
+    flat, offsets = _ragged(rng, [3, 1, 7, 4, 10, 2], dim=16)
+    for is_query in (True, False):
+        blocks = [smve_encode(flat, offsets, B[:, r * w:(r + 1) * w], k, is_query, show_progress=False)
+                  for r in range(R)]
+        expected = sp.hstack(blocks).toarray()
+        for max_elems in (R * w, 10**6):  # one token per chunk, and everything in one chunk
+            got = smve_encode(flat, offsets, B, k, is_query, max_elems=max_elems, show_progress=False,
+                              reps=R).toarray()
+            np.testing.assert_allclose(got, expected, rtol=1e-5, atol=1e-6)
+        single = np.stack([smve(flat[offsets[i]:offsets[i + 1]], k, B, is_query, reps=R).numpy()
+                           for i in range(len(offsets) - 1)])
+        np.testing.assert_allclose(single, expected, rtol=1e-5, atol=1e-6)

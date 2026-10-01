@@ -1,0 +1,43 @@
+{
+  "created_at": "2026-09-30T01:36:27+00:00",
+  "levels": [
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "pairs_per_level": 1000,
+  "budgets": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "real_tokens": "6000 random BGE-M3 ColBERT doc tokens from SciFact; pairs binned at level +-0.025",
+  "settings": {
+    "synthetic, d=128": {
+      "d": 128,
+      "base_w": 2048,
+      "base_k": 8
+    },
+    "synthetic, d=1024": {
+      "d": 1024,
+      "base_w": 4096,
+      "base_k": 8
+    },
+    "BGE-M3 tokens": {
+      "d": 1024,
+      "base_w": 4096,
+      "base_k": 8
+    },
+    "BGE-M3 tokens, centered": {
+      "d": 1024,
+      "base_w": 4096,
+      "base_k": 8
+    }
+  }
+}

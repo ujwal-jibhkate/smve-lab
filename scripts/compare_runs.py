@@ -66,7 +66,9 @@ def label_for(summary: dict) -> str:
     if summary.get("method") == "maxsim":
         return "MaxSim"
     p = summary["params"]
-    return f"SMVE w={p['w']:,} k={p['k']}" + (" centered" if p["center"] else "")
+    reps = p.get("reps", 1)
+    return (f"SMVE w={p['w']:,} k={p['k']}" + (f" R={reps}" if reps > 1 else "")
+            + (" centered" if p["center"] else ""))
 
 
 def load_run(folder: Path) -> dict:
@@ -240,12 +242,12 @@ def main() -> None:
     runs_csv = BASE / "smve" / "runs.csv"
     sweep = pd.read_csv(runs_csv) if runs_csv.exists() else pd.DataFrame()
     if not sweep.empty:
-        g = sweep.groupby(["w", "k", "center"])
+        g = sweep.groupby(["w", "k", "reps", "center"])
         var = g["ndcg@10"].agg(["count", "mean", "std"]).query("count > 1")
         if not var.empty:
             var = var.assign(recall100_mean=g["recall@100"].mean(), recall100_std=g["recall@100"].std())
             var["count"] = var["count"].astype(str)
-            seeds_md = md_table(var.reset_index().set_index(["w", "k", "center"]).rename(
+            seeds_md = md_table(var.reset_index().set_index(["w", "k", "reps", "center"]).rename(
                 columns={"count": "seeds", "mean": "nDCG@10 mean", "std": "nDCG@10 std",
                          "recall100_mean": "R@100 mean", "recall100_std": "R@100 std"}), "{:.4f}")
 

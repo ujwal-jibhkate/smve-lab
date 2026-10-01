@@ -390,3 +390,378 @@ def plot_alpha_sensitivity(sens: pd.DataFrame, chosen: float, path: Path, subtit
     ax.set_xlim(0, x.max())
     _title(ax, "Hybrid sensitivity to the lexical weight", f"{subtitle}  ·  analysis only, not tuned")
     _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# SMVE mechanism plots (scripts/smve_mechanism.py)
+# ---------------------------------------------------------------------------
+
+BUDGET_RAMP = {1: "#86b6ef", 2: "#3987e5", 4: "#1c5cab", 8: "#0d366b"}  # one hue, light -> dark
+
+
+def plot_mechanism_curves(per_level: pd.DataFrame, metric: str, path: Path, title: str, ylabel: str) -> None:
+    """One panel per setting; x = true cosine; colour = budget m; solid = repetitions,
+    dashed = single matrix with the same budget."""
+    _style()
+    settings = list(dict.fromkeys(per_level["setting"]))
+    fig, axes = plt.subplots(1, len(settings), figsize=(4.6 * len(settings), 4.4), sharey=True)
+    for ax, name in zip(axes, settings):
+        df = per_level[per_level["setting"] == name]
+        for (mode, m), g in df.groupby(["mode", "budget"], sort=False):
+            ls = "-" if mode == "repetitions" else (0, (4, 3))
+            ax.plot(g["cosine"], g[metric], color=BUDGET_RAMP[m], lw=2, ls=ls,
+                    marker="o" if mode == "repetitions" else None, markersize=4)
+        ax.set_title(name, loc="left", fontsize=11.5, fontweight="bold", color=TEXT)
+        ax.set_xlabel("true cosine of the token pair")
+        ax.set_xlim(per_level["cosine"].min() - 0.02, per_level["cosine"].max() + 0.02)
+    axes[0].set_ylabel(ylabel)
+    if metric == "zero_fraction":
+        axes[0].set_ylim(-0.02, 1.02)
+    handles = [plt.Line2D([], [], color=BUDGET_RAMP[m], lw=2.5, label=f"budget ×{m}") for m in BUDGET_RAMP]
+    handles += [plt.Line2D([], [], color=TEXT_2, lw=2, marker="o", markersize=4, label="repetitions (R = budget)"),
+                plt.Line2D([], [], color=TEXT_2, lw=2, ls=(0, (4, 3)), label="single matrix, same budget")]
+    fig.legend(handles=handles, loc="lower center", ncol=len(handles), bbox_to_anchor=(0.5, 0))
+    fig.suptitle(title, x=0.04, ha="left", fontsize=13.5, fontweight="bold", color=TEXT)
+    fig.text(0.04, 0.905, "budget ×m = m·w anchors and m·k non-zeros per token; "
+             "base (w, k) = (2048, 8) for d=128, (4096, 8) for d=1024",
+             fontsize=9.5, color=TEXT_2)
+    fig.tight_layout(rect=(0, 0.08, 1, 0.9))
+    _save(fig, path)
+
+
+def plot_mechanism_summary(summary: pd.DataFrame, high_cos: float, path: Path) -> None:
+    """Rows: Spearman(S, true cosine) and zero-fraction of strong pairs; x = budget."""
+    _style()
+    settings = list(dict.fromkeys(summary["setting"]))
+    rows = [("spearman", "Spearman(S, true cosine)", "higher is better"),
+            (f"zero_fraction_cos>={high_cos}", f"fraction S = 0 when cosine ≥ {high_cos}", "lower is better")]
+    mode_color = {"repetitions": SERIES[1], "single matrix": SERIES[0]}
+    fig, axes = plt.subplots(2, len(settings), figsize=(4.4 * len(settings), 7.2), sharex=True)
+    for j, name in enumerate(settings):
+        df = summary[summary["setting"] == name]
+        base = df[df["budget"] == 1]
+        for i, (col, ylabel, note) in enumerate(rows):
+            ax = axes[i, j]
+            for mode, color in mode_color.items():
+                g = pd.concat([base, df[df["mode"] == mode]]).drop_duplicates("budget").sort_values("budget")
+                ax.plot(g["budget"], g[col], color=color, lw=2, marker="o", markersize=6, label=mode)
+            ax.set_xscale("log", base=2)
+            ax.set_xticks(BUDGETS_TICKS, [f"×{b}" for b in BUDGETS_TICKS])
+            if i == 0:
+                ax.set_title(name, loc="left", fontsize=11.5, fontweight="bold", color=TEXT)
+            if j == 0:
+                ax.set_ylabel(f"{ylabel}\n({note})")
+            if i == 1:
+                ax.set_xlabel("budget (anchors and non-zeros per token)")
+                ax.set_ylim(-0.02, max(0.05, summary[col].max() * 1.1))
+    for i in range(2):
+        lo = min(ax.get_ylim()[0] for ax in axes[i])
+        hi = max(ax.get_ylim()[1] for ax in axes[i])
+        for ax in axes[i]:
+            ax.set_ylim(lo, hi)
+    fig.legend(*axes[0, 0].get_legend_handles_labels(), loc="lower center", ncol=2, bbox_to_anchor=(0.5, 0))
+    fig.suptitle("Repetitions vs. one wider matrix at the same budget", x=0.04, ha="left",
+                 fontsize=13.5, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.05, 1, 0.95))
+    _save(fig, path)
+
+
+BUDGETS_TICKS = [1, 2, 4, 8]
+
+
+# ---------------------------------------------------------------------------
+# SMVE sweep plots (scripts/plot_smve_sweep.py). `refs` maps a reference
+# method label -> dict of its metrics / costs (MaxSim, dense, hybrid).
+# ---------------------------------------------------------------------------
+
+K_RAMP = ["#b7d3f6", "#6da7ec", "#2a78d6", "#1c5cab", "#0d366b"]  # sequential blue, k small -> large
+REF_STYLE = {  # reference methods: fixed colour + line style, never a k colour
+    "MaxSim": (SERIES[1], (0, (5, 3))),
+    "BGE-M3 dense + lexical": (SERIES[2], (0, (1, 2))),
+    "BGE-M3 dense": (TEXT_2, (0, (3, 2, 1, 2))),
+}
+
+
+def _ref_lines(ax, refs: dict, metric: str) -> None:
+    for name, vals in refs.items():
+        color, ls = REF_STYLE[name]
+        ax.axhline(vals[metric], color=color, lw=1.6, ls=ls, zorder=1, label=name)
+
+
+def plot_sweep_metric_vs_w(runs: pd.DataFrame, refs: dict, path: Path, title: str) -> None:
+    """2x2 small multiples: metric vs w (log2), one line per k."""
+    _style()
+    metrics = [("ndcg@10", "nDCG@10"), ("recall@100", "Recall@100"), ("mrr@10", "MRR@10"), ("recall@10", "Recall@10")]
+    ks = sorted(runs["k"].unique())
+    colors = dict(zip(ks, K_RAMP[-len(ks):] if len(ks) <= len(K_RAMP) else plt.cm.Blues(np.linspace(.3, 1, len(ks)))))
+    fig, axes = plt.subplots(2, 2, figsize=(13, 9))
+    for ax, (m, label) in zip(axes.flat, metrics):
+        for k in ks:
+            g = runs[runs["k"] == k].sort_values("w")
+            ax.plot(g["w"], g[m], color=colors[k], lw=2, marker="o", markersize=4.5, label=f"k = {k}")
+        _ref_lines(ax, refs, m)
+        ax.set_xscale("log", base=2)
+        ws = sorted(runs["w"].unique())
+        ax.set_xticks(ws, [f"{w // 1024}K" for w in ws])
+        ax.set_title(label, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+        ax.set_xlabel("w (number of anchors)")
+        lo = min(runs[m].min(), min(v[m] for v in refs.values()))
+        ax.set_ylim(max(0, lo - 0.05), min(1.0, max(v[m] for v in refs.values()) + 0.05))
+    fig.legend(*axes[0, 0].get_legend_handles_labels(), loc="lower center", ncol=len(ks) + len(refs),
+               bbox_to_anchor=(0.5, 0), fontsize=9.5)
+    fig.suptitle(title, x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.text(0.04, 0.935, "horizontal lines = reference methods (MaxSim, BGE-M3 dense + lexical, BGE-M3 dense); "
+             "exact numbers in summary.md", fontsize=9.5, color=TEXT_2)
+    fig.tight_layout(rect=(0, 0.04, 1, 0.93))
+    _save(fig, path)
+
+
+def _heatmap(ax, grid: pd.DataFrame, cmap, vmin, vmax, fmt_cell) -> None:
+    im = ax.imshow(grid.to_numpy(dtype=float), cmap=cmap, vmin=vmin, vmax=vmax, aspect="auto", origin="lower")
+    for i in range(grid.shape[0]):
+        for j in range(grid.shape[1]):
+            v = grid.iat[i, j]
+            if np.isnan(v):
+                ax.text(j, i, "–", ha="center", va="center", fontsize=9, color=TEXT_2)
+                continue
+            rgba = im.cmap(im.norm(v))
+            lum = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2]
+            ax.text(j, i, fmt_cell(v), ha="center", va="center", fontsize=8.5,
+                    color="#ffffff" if lum < 0.5 else TEXT)
+    ax.set_xticks(range(grid.shape[1]), [f"{w // 1024}K" for w in grid.columns])
+    ax.set_yticks(range(grid.shape[0]), [str(k) for k in grid.index])
+    ax.set_xlabel("w (number of anchors)")
+    ax.set_ylabel("k (anchors kept per token)")
+    ax.grid(False)
+    return im
+
+
+def plot_sweep_heatmaps(runs: pd.DataFrame, maxsim_ndcg: float, path: Path) -> None:
+    """nDCG@10 over (w, k), uncentered vs centered; each cell shows value and gap to MaxSim."""
+    _style()
+    from matplotlib.colors import LinearSegmentedColormap
+    cmap = LinearSegmentedColormap.from_list("seq_blue", ["#e8f1fc", "#86b6ef", "#2a78d6", "#104281"])
+    cmap.set_bad(SURFACE)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2))
+    vmin, vmax = runs["ndcg@10"].min(), runs["ndcg@10"].max()
+    for ax, center in zip(axes, (False, True)):
+        grid = runs[runs["center"] == center].pivot_table(index="k", columns="w", values="ndcg@10")
+        im = _heatmap(ax, grid, cmap, vmin, vmax, lambda v: f"{v:.3f}\n{v - maxsim_ndcg:+.3f}")
+        ax.set_title("centered" if center else "not centered", loc="left", fontsize=12,
+                     fontweight="bold", color=TEXT)
+    cbar = fig.colorbar(im, ax=axes, fraction=0.025, pad=0.02)
+    cbar.set_label("nDCG@10")
+    cbar.outline.set_visible(False)
+    fig.suptitle(f"SMVE nDCG@10 over (w, k)  ·  second line = gap to MaxSim ({maxsim_ndcg:.3f})",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    _save(fig, path)
+
+
+def plot_sweep_centering_effect(runs: pd.DataFrame, path: Path) -> None:
+    """(centered - not centered) for nDCG@10 and Recall@100; diverging, grey = no change."""
+    _style()
+    from matplotlib.colors import LinearSegmentedColormap
+    cmap = LinearSegmentedColormap.from_list("div", [DIVERGING_NEG, "#f0efec", DIVERGING_POS])
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2))
+    for ax, (m, label) in zip(axes, (("ndcg@10", "Δ nDCG@10"), ("recall@100", "Δ Recall@100"))):
+        on = runs[runs["center"]].pivot_table(index="k", columns="w", values=m)
+        off = runs[~runs["center"]].pivot_table(index="k", columns="w", values=m)
+        delta = on - off
+        lim = np.nanmax(np.abs(delta.to_numpy()))
+        im = _heatmap(ax, delta, cmap, -lim, lim, lambda v: f"{v:+.3f}")
+        ax.set_title(label, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+        cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.02)
+        cbar.outline.set_visible(False)
+    fig.suptitle("Effect of centering (centered − not centered)  ·  blue = centering helps, red = hurts",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    _save(fig, path)
+
+
+def plot_sweep_reps(pairs: pd.DataFrame, seed_std: float, path: Path) -> None:
+    """Each point = one equal-budget pair: x = single wider matrix, y = repetitions.
+
+    Points on the diagonal y = x mean a tie. The grey band is +-1 seed standard
+    deviation: differences inside it are within run-to-run randomness.
+    """
+    _style()
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5.6))
+    sizes = {2: 40, 4: 80, 8: 140}
+    for ax, (xs, ys, label) in zip(axes, (("single nDCG@10", "reps nDCG@10", "nDCG@10"),
+                                          ("single R@100", "reps R@100", "Recall@100"))):
+        lo = min(pairs[xs].min(), pairs[ys].min()) - 0.02
+        hi = max(pairs[xs].max(), pairs[ys].max()) + 0.02
+        grid = np.linspace(lo, hi, 2)
+        ax.fill_between(grid, grid - seed_std, grid + seed_std, color=GRID, alpha=0.9, zorder=0, linewidth=0)
+        ax.plot(grid, grid, color=TEXT_2, lw=1.2, ls=(0, (4, 3)), zorder=1)
+        for center, color in ((False, SERIES[0]), (True, SERIES[2])):
+            g = pairs[pairs["center"] == center]
+            ax.scatter(g[xs], g[ys], s=g["R"].map(sizes), color=color, alpha=0.85,
+                       edgecolors=SURFACE, linewidths=1, zorder=3)
+        d = pairs[ys] - pairs[xs]
+        ax.text(0.02, 0.97, f"mean difference {d.mean():+.4f}\nlargest |difference| {d.abs().max():.4f}\n"
+                            f"seed std ≈ {seed_std:.3f}", transform=ax.transAxes, va="top", fontsize=9.5,
+                color=TEXT_2)
+        ax.set_xlim(lo, hi)
+        ax.set_ylim(lo, hi)
+        ax.set_aspect("equal")
+        ax.set_xlabel(f"{label}, one wider matrix (R·w anchors, top R·k)")
+        ax.set_ylabel(f"{label}, repetitions (R blocks of w, top k each)")
+        ax.set_title(label, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    handles = [plt.Line2D([], [], marker="o", ls="", color=SERIES[0], label="not centered"),
+               plt.Line2D([], [], marker="o", ls="", color=SERIES[2], label="centered")]
+    handles += [plt.Line2D([], [], marker="o", ls="", color=TEXT_2, markersize=np.sqrt(v) / 1.3, label=f"R = {r}")
+                for r, v in sizes.items()]
+    handles += [plt.Line2D([], [], color=TEXT_2, ls=(0, (4, 3)), label="tie (y = x)"),
+                plt.Rectangle((0, 0), 1, 1, color=GRID, label="±1 seed std")]
+    fig.legend(handles=handles, loc="lower center", ncol=len(handles), bbox_to_anchor=(0.5, 0))
+    fig.suptitle("Repetitions vs. one wider matrix at the same budget (SciFact)", x=0.04, ha="left",
+                 fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.95))
+    _save(fig, path)
+
+
+def plot_sweep_tradeoff(runs: pd.DataFrame, refs: dict, path: Path) -> None:
+    """nDCG@10 vs. three costs; every SMVE run + reference methods as labelled points."""
+    _style()
+    panels = [("nnz_per_doc", "non-zeros per document (log)", 1),
+              ("single_query_latency_ms", "single-query latency, ms (log)", 1),
+              ("index_bytes", "index size, MB (log)", 1e6)]
+    center_color = {False: SERIES[0], True: SERIES[2]}
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5.4), sharey=True)
+    for ax, (col, xlabel, scale) in zip(axes, panels):
+        for (center, multi), g in runs.groupby(["center", runs["reps"] > 1]):
+            ax.scatter(g[col] / scale, g["ndcg@10"], s=34 if not multi else 46, marker="^" if multi else "o",
+                       color=center_color[center], alpha=0.85, edgecolors=SURFACE, linewidths=0.8, zorder=3)
+        for name, vals in refs.items():
+            color, ls = REF_STYLE[name]
+            ax.axhline(vals["ndcg@10"], color=color, lw=1.2, ls=ls, zorder=1)
+            if col in vals and vals[col] is not None:
+                ax.scatter(vals[col] / scale, vals["ndcg@10"], marker="*", s=220, color=color,
+                           edgecolors=SURFACE, linewidths=1.2, zorder=4)
+                below = name == "BGE-M3 dense"
+                ax.annotate(name, (vals[col] / scale, vals["ndcg@10"]), xytext=(0, -15 if below else 9),
+                            textcoords="offset points", ha="center", fontsize=8.5, color=TEXT)
+        ax.set_xscale("log")
+        from matplotlib.ticker import FuncFormatter, NullFormatter
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.xaxis.set_minor_formatter(NullFormatter())
+        ax.set_xlabel(xlabel)
+    axes[0].set_ylabel("nDCG@10")
+    handles = [plt.Line2D([], [], marker="o", ls="", color=SERIES[0], label="SMVE, not centered"),
+               plt.Line2D([], [], marker="o", ls="", color=SERIES[2], label="SMVE, centered"),
+               plt.Line2D([], [], marker="^", ls="", color=TEXT_2, label="repetitions (R > 1)"),
+               plt.Line2D([], [], marker="*", ls="", markersize=12, color=TEXT_2, label="reference method")]
+    fig.legend(handles=handles, loc="lower center", ncol=4, bbox_to_anchor=(0.5, 0))
+    fig.suptitle("SMVE quality vs. cost, every sweep setting", x=0.04, ha="left", fontsize=14,
+                 fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.06, 1, 0.95))
+    _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# Reranking plots (scripts/evaluate_rerank.py)
+# colour = reranker, line style = first stage; references in ink / grey.
+# ---------------------------------------------------------------------------
+
+RERANKER_COLOR = {"MaxSim": SERIES[1], "cross-encoder": SERIES[6], "none": TEXT_2}
+STAGE_LS = {"Dense + lexical": "-", "SMVE": (0, (5, 3))}
+RERANK_REF_STYLE = {"Exhaustive MaxSim": (TEXT, (0, (2, 2))), "BGE-M3 dense": (TEXT_2, (0, (5, 2, 1, 2)))}
+
+
+def _rerank_handles(stages) -> list:
+    h = [plt.Line2D([], [], color=RERANKER_COLOR["cross-encoder"], lw=2.5, label="cross-encoder rerank"),
+         plt.Line2D([], [], color=RERANKER_COLOR["MaxSim"], lw=2.5, label="MaxSim rerank")]
+    h += [plt.Line2D([], [], color=TEXT_2, lw=2, ls=STAGE_LS[s], label=f"first stage: {s}") for s in stages]
+    h += [plt.Line2D([], [], color=c, lw=1.5, ls=ls, label=n) for n, (c, ls) in RERANK_REF_STYLE.items()]
+    return h
+
+
+def plot_rerank_depth(summary: pd.DataFrame, refs: dict, path: Path) -> None:
+    """Quality vs rerank depth; depth 'none' = first stage alone."""
+    _style()
+    stages = list(dict.fromkeys(summary["first_stage"]))
+    depths = sorted(summary.loc[summary.depth > 0, "depth"].unique())
+    xpos = {0: 0, **{d: i + 1 for i, d in enumerate(depths)}}
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.2))
+    for ax, (m, label) in zip(axes, (("ndcg@10", "nDCG@10"), ("mrr@10", "MRR@10"))):
+        for stage in stages:
+            base = summary[(summary.first_stage == stage) & (summary.reranker == "none")]
+            for rr in ("MaxSim", "cross-encoder"):
+                g = pd.concat([base, summary[(summary.first_stage == stage) & (summary.reranker == rr)]])
+                ax.plot([xpos[d] for d in g.depth], g[m], color=RERANKER_COLOR[rr], ls=STAGE_LS[stage], lw=2,
+                        marker="o", markersize=5)
+        for name, (c, ls) in RERANK_REF_STYLE.items():
+            ax.axhline(refs[name][m], color=c, lw=1.4, ls=ls, zorder=1)
+        ax.set_xticks(list(xpos.values()), ["none"] + [str(d) for d in depths])
+        ax.set_xlabel("rerank depth d (top-d candidates re-scored)")
+        ax.set_title(label, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    fig.legend(handles=_rerank_handles(stages), loc="lower center", ncol=3, bbox_to_anchor=(0.5, 0))
+    fig.suptitle("Reranking quality vs. depth  ·  SciFact", x=0.04, ha="left", fontsize=14,
+                 fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.13, 1, 0.95))
+    _save(fig, path)
+
+
+def plot_rerank_latency(summary: pd.DataFrame, refs: dict, path: Path) -> None:
+    """nDCG@10 vs single-query latency (log); each line walks d = 10 -> 100."""
+    _style()
+    from matplotlib.ticker import FuncFormatter, NullFormatter
+    stages = list(dict.fromkeys(summary["first_stage"]))
+    fig, ax = plt.subplots(figsize=(10, 5.8))
+    for stage in stages:
+        base = summary[(summary.first_stage == stage) & (summary.reranker == "none")]
+        ax.scatter(base["latency_total_ms"], base["ndcg@10"], s=60, facecolors=SURFACE, edgecolors=TEXT_2,
+                   linewidths=2, zorder=4)
+        ax.annotate(f"{stage} alone", (base["latency_total_ms"].iat[0], base["ndcg@10"].iat[0]),
+                    xytext=(0, 9), textcoords="offset points", ha="center", fontsize=8.5, color=TEXT_2)
+        for rr in ("MaxSim", "cross-encoder"):
+            g = summary[(summary.first_stage == stage) & (summary.reranker == rr)].sort_values("depth")
+            ax.plot(g["latency_total_ms"], g["ndcg@10"], color=RERANKER_COLOR[rr], ls=STAGE_LS[stage], lw=2,
+                    marker="o", markersize=5, zorder=3)
+            for _, r in g.iterrows():
+                ax.annotate(f"{r.depth}", (r.latency_total_ms, r["ndcg@10"]), xytext=(4, 5),
+                            textcoords="offset points", fontsize=8, color=TEXT_2)
+    for name, (c, ls) in RERANK_REF_STYLE.items():
+        v = refs[name]
+        ax.scatter(v["latency_total_ms"], v["ndcg@10"], marker="*", s=240, color=c, edgecolors=SURFACE, zorder=5)
+        ax.annotate(name, (v["latency_total_ms"], v["ndcg@10"]), xytext=(0, 10), textcoords="offset points",
+                    ha="center", fontsize=9, color=TEXT)
+    ax.set_xscale("log")
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    ax.set_xlabel("single-query latency, ms (log)  ·  numbers = rerank depth")
+    ax.set_ylabel("nDCG@10")
+    fig.legend(handles=_rerank_handles(stages)[:2 + len(stages)], loc="lower center", ncol=4,
+               bbox_to_anchor=(0.5, 0))
+    _title(ax, "Quality vs. latency", "cross-encoder on the Mac GPU (MPS, fp16); MaxSim and first stages on CPU")
+    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    _save(fig, path)
+
+
+def plot_rerank_cost(summary: pd.DataFrame, refs: dict, path: Path) -> None:
+    """Per-query compute and total storage, for depth-20 and depth-100 pipelines plus references."""
+    _style()
+    sel = summary[summary.depth.isin([20, 100])].copy()
+    sel = sel.sort_values(["reranker", "first_stage", "depth"])
+    labels = list(sel["config"]) + list(refs)
+    colors = [RERANKER_COLOR[r] for r in sel["reranker"]] + [RERANK_REF_STYLE[n][0] for n in refs]
+    flops = list(sel["flops_total"]) + [v["flops_total"] for v in refs.values()]
+    storage = list(sel["storage_bytes"]) + [v["storage_bytes"] for v in refs.values()]
+    y = np.arange(len(labels))[::-1]
+    fig, axes = plt.subplots(1, 2, figsize=(14, 0.45 * len(labels) + 2), sharey=True)
+    for ax, vals, title, unit in ((axes[0], flops, "Compute per query", "flops"),
+                                  (axes[1], storage, "Storage (first-stage index + reranker)", "bytes")):
+        ax.barh(y, vals, height=0.62, color=colors, edgecolor=SURFACE, linewidth=2)
+        for yi, v in zip(y, vals):
+            txt = (f"{v / 1e12:.1f} TFLOP" if v >= 1e12 else f"{v / 1e9:.2f} GFLOP") if unit == "flops" \
+                else _fmt(v, "bytes")
+            ax.text(v, yi, f"  {txt}", va="center", fontsize=8.5, color=TEXT)
+        ax.set_xscale("log")
+        ax.set_xlim(min(vals) / 3, max(vals) * 30)
+        ax.grid(axis="y", visible=False)
+        ax.set_title(title, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    axes[0].set_yticks(y, labels)
+    fig.suptitle("Cost of each pipeline (log scale)", x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    _save(fig, path)

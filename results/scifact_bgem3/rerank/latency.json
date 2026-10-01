@@ -1,0 +1,18 @@
+{
+  "SMVE|cross-encoder|10": 836.43354200467,
+  "SMVE|MaxSim|10": 18.924270509160124,
+  "SMVE|cross-encoder|20": 1642.3543959972449,
+  "SMVE|MaxSim|20": 19.301042004371993,
+  "SMVE|cross-encoder|50": 3744.585812004516,
+  "SMVE|MaxSim|50": 48.043624992715195,
+  "SMVE|cross-encoder|100": 7490.835292002885,
+  "SMVE|MaxSim|100": 82.03845849493518,
+  "Dense + lexical|cross-encoder|10": 836.6356045153225,
+  "Dense + lexical|MaxSim|10": 5.110604004585184,
+  "Dense + lexical|cross-encoder|20": 1641.6479165054625,
+  "Dense + lexical|MaxSim|20": 9.22741650720127,
+  "Dense + lexical|cross-encoder|50": 3639.147645488265,
+  "Dense + lexical|MaxSim|50": 23.316249484196305,
+  "Dense + lexical|cross-encoder|100": 7118.753853996168,
+  "Dense + lexical|MaxSim|100": 105.77179200481623
+}

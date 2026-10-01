@@ -50,6 +50,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--center", nargs="+", default=["off"], choices=["off", "on"],
                    help="subtract the mean token vector before projecting")
     p.add_argument("--seed", type=int, nargs="+", default=[0], help="anchor seed(s)")
+    p.add_argument("--reps", type=int, nargs="+", default=[1],
+                   help="repetitions R: R blocks of w anchors, top-k in each (total width R*w)")
+    p.add_argument("--skip-existing", action="store_true", help="skip settings whose folder has a summary.json")
     p.add_argument("--split", default="test", choices=["test", "train"])
     p.add_argument("--depth", type=int, default=100)
     p.add_argument("--device", default="cpu", help="torch device for encoding (cpu is as fast as mps here)")
@@ -58,8 +61,9 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def run_name(w: int, k: int, center: bool, seed: int) -> str:
-    return f"w{w}_k{k}{'_center' if center else ''}_seed{seed}"
+def run_name(w: int, k: int, center: bool, seed: int, reps: int = 1) -> str:
+    # R=1 keeps the original naming so earlier runs are found by --skip-existing.
+    return f"w{w}_k{k}{f'_r{reps}' if reps > 1 else ''}{'_center' if center else ''}_seed{seed}"
 
 
 def collect_runs() -> pd.DataFrame:
@@ -67,8 +71,9 @@ def collect_runs() -> pd.DataFrame:
     rows = []
     for f in sorted(SMVE_DIR.glob("*/summary.json")):
         s = json.loads(f.read_text())
-        rows.append({"run": f.parent.name, **s["params"], **s["timing"],
-                     "index_bytes": s["index"]["bytes"], **s["metrics"]})
+        rows.append({"run": f.parent.name, "reps": 1, **s["params"], **s["timing"],
+                     "index_bytes": s["index"]["bytes"], "nnz_per_doc": s["index"].get("nnz_per_doc"),
+                     "nnz_per_query": s["index"].get("nnz_per_query"), **s["metrics"]})
     df = pd.DataFrame(rows)
     if not df.empty:
         df.to_csv(SMVE_DIR / "runs.csv", index=False)
@@ -91,9 +96,14 @@ def main() -> None:
     dim = d_flat.shape[1]
 
     mu, mu_seconds = None, 0.0
-    for w, k, center, seed in itertools.product(args.w, args.k, args.center, args.seed):
+    for w, k, center, seed, reps in itertools.product(args.w, args.k, args.center, args.seed, args.reps):
         center = center == "on"
-        name = run_name(w, k, center, seed)
+        name = run_name(w, k, center, seed, reps)
+        if k >= w:
+            continue
+        if args.skip_existing and (SMVE_DIR / name / "summary.json").exists():
+            print(f"skip {name} (exists)")
+            continue
         print(f"\n=== SMVE {name} ===")
 
         # The mean token vector depends only on the corpus, so estimate it once.
@@ -102,14 +112,16 @@ def main() -> None:
                 mu = token_mean(d_flat)
             mu_seconds = t.seconds
         c = mu if center else None
-        B = make_anchors(dim, w, seed)
+        B = make_anchors(dim, reps * w, seed)
 
         # Offline: build the document index.
         with Timer() as t_docs:
-            D = smve_encode(d_flat, d_offsets, B, k, is_query=False, device=args.device, center=c)
+            D = smve_encode(d_flat, d_offsets, B, k, is_query=False, device=args.device, center=c,
+                            reps=reps)
         # Online: encode queries, then score them against the index.
         with Timer() as t_q:
-            Q = smve_encode(q_flat, q_offsets, B, k, is_query=True, device=args.device, center=c)
+            Q = smve_encode(q_flat, q_offsets, B, k, is_query=True, device=args.device, center=c,
+                            reps=reps)
         with Timer() as t_s:
             scores = smve_scores(Q, D)
         print(f"docs {t_docs.seconds:.1f}s · queries {t_q.seconds:.2f}s · scoring {t_s.seconds:.3f}s")
@@ -118,12 +130,13 @@ def main() -> None:
         if args.latency_queries:
             def one_query(i: int):
                 q = smve_encode(q_flat[q_offsets[i]:q_offsets[i + 1]], q_offsets[i:i + 2] - q_offsets[i],
-                                B, k, is_query=True, device=args.device, show_progress=False, center=c)
+                                B, k, is_query=True, device=args.device, show_progress=False, center=c,
+                                 reps=reps)
                 return smve_scores(q, D)
             latency = median_latency_ms(one_query, len(query_ids), n=args.latency_queries)
             print(f"single-query latency (median of {args.latency_queries}): {latency:.1f} ms")
 
-        title = f"SMVE w={w} k={k}{' centered' if center else ''} · SciFact"
+        title = f"SMVE w={w} k={k}{f' R={reps}' if reps > 1 else ''}{' centered' if center else ''} · SciFact"
         evaluate_and_save(
             scores, query_ids, doc_ids, qrels, SMVE_DIR / name,
             run_id=f"smve_{name}",
@@ -135,7 +148,7 @@ def main() -> None:
             summary_extra={
                 "method": "smve",
                 "split": args.split,
-                "params": {"w": w, "k": k, "center": center, "seed": seed},
+                "params": {"w": w, "k": k, "center": center, "seed": seed, "reps": reps},
                 "timing": {
                     "index_build_seconds": round(t_docs.seconds + (mu_seconds if center else 0.0), 3),
                     "query_encode_seconds": round(t_q.seconds, 3),

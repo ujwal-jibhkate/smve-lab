@@ -1,0 +1,92 @@
+{
+  "created_at": "2026-09-30T05:49:49+00:00",
+  "cross_encoder": {
+    "model": "BAAI/bge-reranker-v2-m3",
+    "device": "mps",
+    "dtype": "fp16",
+    "max_length": 512,
+    "params": 567755777,
+    "non_embedding_params": 303360001,
+    "weight_bytes": 1135511554,
+    "mean_tokens_per_pair": 396.4694286250704
+  },
+  "maxsim_rerank_device": "CPU",
+  "first_stages": {
+    "SMVE": "/Users/ujwaljibhkate/Projects/smve-lab/results/scifact_bgem3/smve/w65536_k32_center_seed0",
+    "Dense + lexical": "/Users/ujwaljibhkate/Projects/smve-lab/results/scifact_bgem3/hybrid_dense_lexical"
+  },
+  "depths": [
+    10,
+    20,
+    50,
+    100
+  ],
+  "latency_queries": 20,
+  "corpus_text_bytes": 7783564,
+  "references": {
+    "Exhaustive MaxSim": {
+      "ndcg@10": 0.69912,
+      "mrr@10": 0.67433,
+      "recall@10": 0.81056,
+      "recall@100": 0.92033,
+      "latency_total_ms": 535.39,
+      "flops_total": 100394587176.96,
+      "storage_bytes": 3811529216
+    },
+    "BGE-M3 dense": {
+      "ndcg@10": 0.65418,
+      "mrr@10": 0.6217,
+      "recall@10": 0.78511,
+      "recall@100": 0.897,
+      "latency_total_ms": 0.673,
+      "flops_total": 10614784,
+      "storage_bytes": 21229568
+    }
+  },
+  "paired_vs_exhaustive_maxsim_ndcg10": {
+    "SMVE + MaxSim @100": {
+      "mean_delta": -0.00937167503645677,
+      "ci95": [
+        -0.019972642909765418,
+        -0.0011417430268873489
+      ],
+      "wins": 20,
+      "ties": 270,
+      "losses": 10,
+      "wilcoxon_p": 0.8509164737098234
+    },
+    "SMVE + cross-encoder @100": {
+      "mean_delta": 0.010758640494519777,
+      "ci95": [
+        -0.015039177793496117,
+        0.03650673905723782
+      ],
+      "wins": 55,
+      "ties": 204,
+      "losses": 41,
+      "wilcoxon_p": 0.42327794268379126
+    },
+    "Dense + lexical + MaxSim @100": {
+      "mean_delta": -0.0014355885269113078,
+      "ci95": [
+        -0.0043067655807339286,
+        3.885780586188048e-18
+      ],
+      "wins": 18,
+      "ties": 278,
+      "losses": 4,
+      "wilcoxon_p": 0.12608716276117937
+    },
+    "Dense + lexical + cross-encoder @100": {
+      "mean_delta": 0.026837074972225317,
+      "ci95": [
+        -0.001058540870912072,
+        0.05489041432335182
+      ],
+      "wins": 59,
+      "ties": 199,
+      "losses": 42,
+      "wilcoxon_p": 0.08086047508961412
+    }
+  }
+}

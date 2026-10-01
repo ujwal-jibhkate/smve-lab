@@ -15,6 +15,14 @@ once, and then scores with one sparse dot product:
        - doc:   MEAN over the tokens that hit a -> d[a]
   4. Score:          q . d = sum_a q[a] * d[a]
 
+Repetitions (`reps` = R): split the anchors into R independent blocks of w
+and take the top-k inside EACH block, so every token keeps R*k anchors, k per
+block. Concatenating R independent SMVE vectors is exactly this, because R
+blocks of w random columns are statistically the same as one matrix with R*w
+random columns - only where the top-k is taken differs. It gives a matching
+query/doc token pair R independent chances to share an anchor (fewer exact
+zeros) and averages R independent estimates (less noise). R=1 is plain SMVE.
+
 Why this approximates MaxSim: a query token contributes to anchor a only if a
 is one of its nearest anchors, and d[a] is the average strength of the doc
 tokens that sit near that same anchor - i.e. doc tokens that are *close to the
@@ -49,11 +57,28 @@ def make_anchors(dim: int, w: int, seed: int = 0) -> torch.Tensor:
     return B / B.norm(dim=0, keepdim=True)
 
 
-def smve(token_embeddings, k: int, B: torch.Tensor, is_query: bool) -> torch.Tensor:
-    """Encode one text's token vectors (n_tokens, d) into a (w,) SMVE vector."""
+def topk_blocks(P: torch.Tensor, k: int, reps: int = 1) -> tuple[torch.Tensor, torch.Tensor]:
+    """Top-k of each row within each of `reps` equal column blocks.
+
+    P: (T, reps*w) projections. Returns values and GLOBAL column indices, both
+    (T, reps*k). With reps=1 this is just torch.topk(P, k).
+    """
+    T, W = P.shape
+    assert W % reps == 0, "anchor count must be divisible by reps"
+    w = W // reps
+    values, indices = torch.topk(P.view(T, reps, w), k, dim=-1)  # (T, reps, k)
+    indices = indices + torch.arange(reps, device=P.device)[None, :, None] * w  # local -> global
+    return values.reshape(T, reps * k), indices.reshape(T, reps * k)
+
+
+def smve(token_embeddings, k: int, B: torch.Tensor, is_query: bool, reps: int = 1) -> torch.Tensor:
+    """Encode one text's token vectors (n_tokens, d) into a (w,) SMVE vector.
+
+    With reps > 1, B holds reps blocks of anchors (w = reps * block width).
+    """
     x = torch.as_tensor(np.asarray(token_embeddings)).to(torch.float32)
     projections = x @ B  # (n_tokens, w)
-    values, indices = torch.topk(projections, k, dim=-1)  # (n_tokens, k)
+    values, indices = topk_blocks(projections, k, reps)  # (n_tokens, reps*k)
 
     # Pool straight from the (n_tokens, k) top-k lists instead of scattering
     # them into two dense (n_tokens, w) matrices first.
@@ -75,6 +100,7 @@ def smve_encode(
     device: str = "cpu",
     show_progress: bool = True,
     center: np.ndarray | None = None,
+    reps: int = 1,
 ) -> sp.csr_matrix:
     """Encode every item of a ragged (flat, offsets) token array with SMVE.
 
@@ -87,6 +113,9 @@ def smve_encode(
     `center` (optional, shape (d,)): a vector subtracted from every token
     before projecting, followed by re-normalizing to unit length. See
     `token_mean` for why this helps.
+
+    `reps`: number of anchor blocks in B (see module docstring). B must have
+    reps * (block width) columns, e.g. make_anchors(d, reps * w, seed).
     """
     n_items, w = len(offsets) - 1, B.shape[1]
     B = B.to(device)
@@ -106,7 +135,7 @@ def smve_encode(
         X = torch.from_numpy(np.asarray(flat[t0:t1], dtype=np.float32)).to(device)
         if mu is not None:
             X = torch.nn.functional.normalize(X - mu, dim=1)
-        values, indices = torch.topk(X @ B, k, dim=1)  # (T, k)
+        values, indices = topk_blocks(X @ B, k, reps)  # (T, reps*k)
 
         # Which item (0-based within this chunk) each token belongs to.
         item = torch.repeat_interleave(
