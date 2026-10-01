@@ -50,15 +50,19 @@ def maxsim_scores(
     d_offsets: np.ndarray,
     chunk_tokens: int = 32_768,
     show_progress: bool = True,
+    q_chunk_tokens: int = 16_384,
 ) -> np.ndarray:
     """Score every query against every document with MaxSim.
 
     Args:
         q_flat, q_offsets: ragged query token vectors (see storage.py).
         d_flat, d_offsets: ragged document token vectors; d_flat may be mmapped.
-        chunk_tokens: approximate number of document tokens per matmul. The
-            similarity block is (total query tokens x chunk_tokens) float32, so
-            with ~7.8k query tokens, 32k doc tokens is ~1 GB of RAM.
+        chunk_tokens: approximate number of document tokens per matmul.
+        q_chunk_tokens: approximate number of query tokens per pass over the
+            documents. The similarity block is (q_chunk_tokens x chunk_tokens)
+            float32, ~2 GB at the defaults. Small query sets (e.g. SciFact's
+            7.9k tokens) fit in one pass; long-query sets (ArguAna, ~280k
+            tokens) take several passes over the documents.
 
     Returns:
         (n_queries, n_docs) float32 matrix of MaxSim scores.
@@ -68,27 +72,35 @@ def maxsim_scores(
     assert np.all(np.diff(q_offsets) > 0), "every query needs at least one token"
     assert np.all(np.diff(d_offsets) > 0), "every document needs at least one token"
 
-    Q = np.asarray(q_flat, dtype=np.float32)
-    q_starts = q_offsets[:-1]
     scores = np.empty((n_q, n_d), dtype=np.float32)
+    q_batches = []
+    qs = 0
+    while qs < n_q:
+        qe = int(np.searchsorted(q_offsets, q_offsets[qs] + q_chunk_tokens, side="right")) - 1
+        qe = min(max(qe, qs + 1), n_q)
+        q_batches.append((qs, qe))
+        qs = qe
 
-    pbar = tqdm(total=n_d, desc="MaxSim", unit="doc", disable=not show_progress)
-    start = 0
-    while start < n_d:
-        # Grow the chunk until it holds ~chunk_tokens tokens (at least one doc).
-        end = int(np.searchsorted(d_offsets, d_offsets[start] + chunk_tokens, side="right")) - 1
-        end = min(max(end, start + 1), n_d)
+    pbar = tqdm(total=n_d * len(q_batches), desc="MaxSim", unit="doc", disable=not show_progress)
+    for qs, qe in q_batches:
+        Q = np.asarray(q_flat[q_offsets[qs]:q_offsets[qe]], dtype=np.float32)
+        q_starts = q_offsets[qs:qe] - q_offsets[qs]
+        start = 0
+        while start < n_d:
+            # Grow the chunk until it holds ~chunk_tokens tokens (at least one doc).
+            end = int(np.searchsorted(d_offsets, d_offsets[start] + chunk_tokens, side="right")) - 1
+            end = min(max(end, start + 1), n_d)
 
-        t0, t1 = d_offsets[start], d_offsets[end]
-        D = np.asarray(d_flat[t0:t1], dtype=np.float32)  # (Td, dim)
-        S = Q @ D.T  # (Tq, Td): every query token vs every doc token
+            t0, t1 = d_offsets[start], d_offsets[end]
+            D = np.asarray(d_flat[t0:t1], dtype=np.float32)  # (Td, dim)
+            S = Q @ D.T  # (Tq, Td): every query token vs every doc token
 
-        doc_starts = d_offsets[start:end] - t0
-        best_per_doc = np.maximum.reduceat(S, doc_starts, axis=1)  # (Tq, n_docs)
-        scores[:, start:end] = np.add.reduceat(best_per_doc, q_starts, axis=0)
+            doc_starts = d_offsets[start:end] - t0
+            best_per_doc = np.maximum.reduceat(S, doc_starts, axis=1)  # (Tq, n_docs)
+            scores[qs:qe, start:end] = np.add.reduceat(best_per_doc, q_starts, axis=0)
 
-        pbar.update(end - start)
-        start = end
+            pbar.update(end - start)
+            start = end
     pbar.close()
     return scores
 

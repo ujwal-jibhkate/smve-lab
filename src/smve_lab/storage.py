@@ -39,7 +39,7 @@ ARRAY_KEYS = [
 
 
 def save_embeddings(
-    emb: dict[str, np.ndarray], ids: list[str], save_dir: Path, name: str
+    emb: dict[str, np.ndarray], ids: list[str], save_dir: Path, name: str, combined: bool = True
 ) -> None:
     save_dir = Path(save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -49,7 +49,8 @@ def save_embeddings(
     with open(save_dir / f"{name}_ids.json", "w") as f:
         json.dump(ids, f)
 
-    np.savez(save_dir / f"{name}_all.npz", ids=np.array(ids), **emb)
+    if combined:  # optional portable copy; doubles disk use
+        np.savez(save_dir / f"{name}_all.npz", ids=np.array(ids), **emb)
 
 
 def load_separate(

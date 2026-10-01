@@ -96,15 +96,25 @@ def evaluate_and_save(
     save_scores: bool = True,
     make_plots: bool = True,
     verbose: bool = True,
+    ignore_identical_ids: bool = False,
 ) -> dict:
     """Rank, evaluate, save and plot one run. Returns the summary dict.
 
     score_norm: optional per-query divisor for the score-separation plot only
     (e.g. query token count, since both MaxSim and SMVE sum over query tokens
     and so grow with query length). Rankings are unaffected.
+
+    ignore_identical_ids: drop a document whose id equals the query's id
+    (BEIR convention, needed for ArguAna where queries are corpus documents).
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+    if ignore_identical_ids:
+        col = {d: j for j, d in enumerate(doc_ids)}
+        scores = scores.copy()
+        for i, q in enumerate(query_ids):
+            if q in col:
+                scores[i, col[q]] = -np.inf
 
     run = top_k(scores, query_ids, doc_ids, depth)
     ranked_ids = {qid: [d for d, _ in ranked] for qid, ranked in run.items()}

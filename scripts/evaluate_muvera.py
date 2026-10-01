@@ -22,20 +22,19 @@ import json
 import numpy as np
 import pandas as pd
 
-from smve_lab.config import ARTIFACTS_DIR, RESULTS_DIR
 from smve_lab.evaluation import Timer, evaluate_and_save, median_latency_ms
 from smve_lab.maxsim import subset_ragged
 from smve_lab.muvera import MuveraFDE
-from smve_lab.scifact import load_qrels
+from smve_lab.datasets import DATASETS, emb_dir, info, load_qrels, results_dir
 from smve_lab.smve import token_mean
 from smve_lab.storage import load_separate
 
-EMB_DIR = ARTIFACTS_DIR / "embeddings" / "scifact_bgem3"
-OUT = RESULTS_DIR / "scifact_bgem3" / "muvera"
+OUT = results_dir("scifact") / "muvera"  # default; main() switches it to the chosen dataset
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--dataset", default="scifact", choices=list(DATASETS))
     p.add_argument("--reps", type=int, nargs="+", default=[20], help="R: independent repetitions")
     p.add_argument("--k-sim", type=int, nargs="+", default=[5], help="SimHash bits -> 2^k_sim buckets")
     p.add_argument("--d-proj", type=int, nargs="+", default=[16], help="projected size of each bucket block")
@@ -60,8 +59,11 @@ def collect_runs() -> pd.DataFrame:
 
 
 def main() -> None:
+    global OUT
     args = parse_args()
-    qrels = load_qrels("test")
+    OUT = results_dir(args.dataset) / "muvera"
+    EMB_DIR, ds = emb_dir(args.dataset), info(args.dataset)
+    qrels = load_qrels(args.dataset)
     q_emb, all_qids = load_separate(EMB_DIR, "queries")
     d_emb, doc_ids = load_separate(EMB_DIR, "docs", mmap_colbert=True)
     d_flat, d_off = d_emb["colbert_flat"], d_emb["colbert_offsets"]
@@ -101,10 +103,11 @@ def main() -> None:
         evaluate_and_save(
             scores, query_ids, doc_ids, qrels, OUT / name,
             run_id=f"muvera_{name}",
-            run_title=f"MUVERA R={R} k_sim={k_sim} d_proj={d_proj}{' centered' if center else ''} · SciFact",
+            run_title=f"MUVERA R={R} k_sim={k_sim} d_proj={d_proj}{' centered' if center else ''} · {ds.display}",
+            ignore_identical_ids=ds.ignore_identical_ids,
             score_norm=np.diff(q_off), save_scores=not args.light, make_plots=not args.light,
             summary_extra={
-                "method": "muvera", "split": "test",
+                "method": "muvera", "split": "test", "dataset": args.dataset,
                 "label": f"MUVERA R={R} k={k_sim} p={d_proj}" + (" centered" if center else ""),
                 "params": {"reps": R, "k_sim": k_sim, "d_proj": d_proj, "center": center, "seed": seed},
                 "timing": {"index_build_seconds": round(t_docs.seconds, 3),

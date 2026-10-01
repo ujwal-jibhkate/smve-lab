@@ -32,15 +32,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from smve_lab.config import ARTIFACTS_DIR, RESULTS_DIR
 from smve_lab.evaluation import Timer, evaluate_and_save, median_latency_ms
 from smve_lab.maxsim import subset_ragged
-from smve_lab.scifact import load_qrels
+from smve_lab.datasets import DATASETS, emb_dir, info, load_qrels, results_dir
 from smve_lab.smve import csr_nbytes, make_anchors, smve_encode, smve_scores, token_mean
 from smve_lab.storage import load_separate
 
-EMB_DIR = ARTIFACTS_DIR / "embeddings" / "scifact_bgem3"
-SMVE_DIR = RESULTS_DIR / "scifact_bgem3" / "smve"
+SMVE_DIR = results_dir("scifact") / "smve"  # default; main() switches it to the chosen dataset
 
 
 def parse_args() -> argparse.Namespace:
@@ -53,6 +51,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--reps", type=int, nargs="+", default=[1],
                    help="repetitions R: R blocks of w anchors, top-k in each (total width R*w)")
     p.add_argument("--skip-existing", action="store_true", help="skip settings whose folder has a summary.json")
+    p.add_argument("--dataset", default="scifact", choices=list(DATASETS))
     p.add_argument("--split", default="test", choices=["test", "train"])
     p.add_argument("--depth", type=int, default=100)
     p.add_argument("--device", default="cpu", help="torch device for encoding (cpu is as fast as mps here)")
@@ -66,24 +65,28 @@ def run_name(w: int, k: int, center: bool, seed: int, reps: int = 1) -> str:
     return f"w{w}_k{k}{f'_r{reps}' if reps > 1 else ''}{'_center' if center else ''}_seed{seed}"
 
 
-def collect_runs() -> pd.DataFrame:
+def collect_runs(smve_dir=None) -> pd.DataFrame:
     """One row per SMVE run on disk - the input for trade-off plots."""
+    smve_dir = smve_dir or SMVE_DIR
     rows = []
-    for f in sorted(SMVE_DIR.glob("*/summary.json")):
+    for f in sorted(smve_dir.glob("*/summary.json")):
         s = json.loads(f.read_text())
         rows.append({"run": f.parent.name, "reps": 1, **s["params"], **s["timing"],
                      "index_bytes": s["index"]["bytes"], "nnz_per_doc": s["index"].get("nnz_per_doc"),
                      "nnz_per_query": s["index"].get("nnz_per_query"), **s["metrics"]})
     df = pd.DataFrame(rows)
     if not df.empty:
-        df.to_csv(SMVE_DIR / "runs.csv", index=False)
+        df.to_csv(smve_dir / "runs.csv", index=False)
     return df
 
 
 def main() -> None:
+    global SMVE_DIR
     args = parse_args()
+    SMVE_DIR = results_dir(args.dataset) / "smve"
+    EMB_DIR, ds = emb_dir(args.dataset), info(args.dataset)
 
-    qrels = load_qrels(args.split)
+    qrels = load_qrels(args.dataset, args.split)
     query_emb, all_query_ids = load_separate(EMB_DIR, "queries")
     doc_emb, doc_ids = load_separate(EMB_DIR, "docs", mmap_colbert=True)
     d_flat, d_offsets = doc_emb["colbert_flat"], doc_emb["colbert_offsets"]
@@ -136,7 +139,7 @@ def main() -> None:
             latency = median_latency_ms(one_query, len(query_ids), n=args.latency_queries)
             print(f"single-query latency (median of {args.latency_queries}): {latency:.1f} ms")
 
-        title = f"SMVE w={w} k={k}{f' R={reps}' if reps > 1 else ''}{' centered' if center else ''} · SciFact"
+        title = f"SMVE w={w} k={k}{f' R={reps}' if reps > 1 else ''}{' centered' if center else ''} · {ds.display}"
         evaluate_and_save(
             scores, query_ids, doc_ids, qrels, SMVE_DIR / name,
             run_id=f"smve_{name}",
@@ -145,9 +148,11 @@ def main() -> None:
             score_norm=np.diff(q_offsets),
             save_scores=not args.light,
             make_plots=not args.light,
+            ignore_identical_ids=ds.ignore_identical_ids,
             summary_extra={
                 "method": "smve",
                 "split": args.split,
+                "dataset": args.dataset,
                 "params": {"w": w, "k": k, "center": center, "seed": seed, "reps": reps},
                 "timing": {
                     "index_build_seconds": round(t_docs.seconds + (mu_seconds if center else 0.0), 3),

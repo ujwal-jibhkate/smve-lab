@@ -20,20 +20,18 @@ Writes results/scifact_bgem3/first_stage/{all_runs.csv, summary.md, plots/fronti
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from smve_lab.config import RESULTS_DIR
 from smve_lab.evaluation import read_trec_run
 from smve_lab.metrics import evaluate_run
 from smve_lab.plots import plot_first_stage_frontiers
-from smve_lab.scifact import load_qrels
+from smve_lab.datasets import DATASETS, info, load_qrels, results_dir
 
-BASE = RESULTS_DIR / "scifact_bgem3"
-OUT = BASE / "first_stage"
 REFS = {"Exhaustive MaxSim": "colbert_maxsim", "BM25": "bm25", "BGE-M3 dense": "dense",
         "BGE-M3 lexical": "lexical", "BGE-M3 dense + lexical": "hybrid_dense_lexical"}
 SIZE_BUDGETS_MB = [25, 50, 100, 200, 400]
@@ -41,8 +39,14 @@ LATENCY_BUDGETS_MS = [10, 30, 100, 250]
 
 
 def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--dataset", default="scifact", choices=list(DATASETS))
+    args = p.parse_args()
+    BASE = results_dir(args.dataset)
+    OUT = BASE / "first_stage"
+    ds = info(args.dataset)
     (OUT / "plots").mkdir(parents=True, exist_ok=True)
-    qrels = load_qrels("test")
+    qrels = load_qrels(args.dataset)
     z = np.load(BASE / "colbert_maxsim" / "scores.npz")
     qi = {q: i for i, q in enumerate(z["query_ids"].tolist())}
     di = {d: j for j, d in enumerate(z["doc_ids"].tolist())}
@@ -104,7 +108,7 @@ def main() -> None:
                          f"{r['recall@100']:.4f} | {r['rerank_ndcg@10']:.4f} | {r['index_mb']:,.1f} MB | "
                          f"{r['single_query_latency_ms']:.1f} ms |")
     text = "\n".join([
-        f"# First stages on SciFact: SMVE ({(runs.family == 'SMVE').sum()} settings) vs "
+        f"# First stages on {ds.display}: SMVE ({(runs.family == 'SMVE').sum()} settings) vs "
         f"MUVERA ({(runs.family == 'MUVERA').sum()} settings)\n",
         "All on CPU. MaxSim rerank = exact MaxSim over the first stage's top 100.\n",
         "## References\n", *ref_lines,
@@ -114,7 +118,7 @@ def main() -> None:
     ])
     (OUT / "summary.md").write_text(text + "\n")
     print(text)
-    plot_first_stage_frontiers(runs, refs, OUT / "plots" / "frontiers.png")
+    plot_first_stage_frontiers(runs, refs, OUT / "plots" / "frontiers.png", ds.display)
     print(f"\nsaved to {OUT}")
 
 

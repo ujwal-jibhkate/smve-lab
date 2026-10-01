@@ -32,22 +32,20 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
-from smve_lab.config import ARTIFACTS_DIR, RESULTS_DIR
 from smve_lab.evaluation import Timer, evaluate_and_save, median_latency_ms
 from smve_lab.maxsim import top_k
 from smve_lab.metrics import evaluate_run
 from smve_lab.plots import plot_alpha_sensitivity
-from smve_lab.scifact import load_qrels
+from smve_lab.datasets import DATASETS, emb_dir, info, load_qrels, results_dir
 from smve_lab.storage import load_separate
 
-EMB_DIR = ARTIFACTS_DIR / "embeddings" / "scifact_bgem3"
-OUT = RESULTS_DIR / "scifact_bgem3"
 VOCAB_SIZE = 250_002  # XLM-RoBERTa vocabulary used by BGE-M3
 ALPHA_GRID = [0.0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0]
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--dataset", default="scifact", choices=list(DATASETS))
     p.add_argument("--split", default="test", choices=["test", "train"])
     p.add_argument("--alpha", type=float, default=0.3, help="lexical weight in the hybrid")
     p.add_argument("--depth", type=int, default=100)
@@ -70,7 +68,8 @@ def csr_nbytes(m: sp.csr_matrix) -> int:
 
 def main() -> None:
     args = parse_args()
-    qrels = load_qrels(args.split)
+    EMB_DIR, OUT, ds = emb_dir(args.dataset), results_dir(args.dataset), info(args.dataset)
+    qrels = load_qrels(args.dataset, args.split)
     q_emb, all_qids = load_separate(EMB_DIR, "queries")
     d_emb, doc_ids = load_separate(EMB_DIR, "docs")
 
@@ -111,12 +110,14 @@ def main() -> None:
         evaluate_and_save(
             scores, query_ids, doc_ids, qrels, OUT / name,
             run_id=f"bgem3_{name}",
-            run_title=f"{label} · SciFact",
+            run_title=f"{label} · {ds.display}",
+            ignore_identical_ids=ds.ignore_identical_ids,
             depth=args.depth,
             summary_extra={
                 "method": name,
                 "label": label,
                 "split": args.split,
+                "dataset": args.dataset,
                 "params": {"alpha": args.alpha} if name.startswith("hybrid") else {},
                 "timing": {
                     # Vectors come out of the same BGE-M3 forward pass as the
@@ -134,16 +135,22 @@ def main() -> None:
     # --- How sensitive is the hybrid to alpha? -------------------------------
     # Sensitivity ANALYSIS on the test set, not tuning: the reported hybrid
     # keeps the paper's alpha=0.3 so it isn't fitted to these queries.
+    dense_m = dense.copy()
+    if ds.ignore_identical_ids:  # same self-match filter as evaluate_and_save
+        col = {d: j for j, d in enumerate(doc_ids)}
+        for i, q in enumerate(query_ids):
+            if q in col:
+                dense_m[i, col[q]] = -np.inf
     rows_out = []
     for a in ALPHA_GRID:
-        run = top_k(dense + a * lexical, query_ids, doc_ids, args.depth)
+        run = top_k(dense_m + a * lexical, query_ids, doc_ids, args.depth)
         pq = evaluate_run({q: [d for d, _ in r] for q, r in run.items()}, qrels, [10, 100],
                           metrics=["ndcg", "recall", "mrr"])
         rows_out.append({"alpha": a, **pq[[c for c in pq.columns if "@" in c]].mean().to_dict()})
     sens = pd.DataFrame(rows_out)
     sens.to_csv(OUT / "hybrid_dense_lexical" / "alpha_sensitivity.csv", index=False)
     plot_alpha_sensitivity(sens, args.alpha, OUT / "hybrid_dense_lexical" / "plots" / "alpha_sensitivity.png",
-                           "BGE-M3 dense + α·lexical · SciFact")
+                           f"BGE-M3 dense + α·lexical · {ds.display}")
     print("\nalpha sensitivity (analysis only):")
     print(sens.round(4).to_string(index=False))
 

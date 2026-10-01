@@ -28,8 +28,10 @@ def test_matches_naive_loop_across_chunks():
     expected = _naive(q_flat, q_off, d_flat, d_off)
     # Tiny chunk forces many chunks, including single-doc ones.
     for chunk in (1, 7, 1000):
-        got = maxsim_scores(q_flat, q_off, d_flat, d_off, chunk_tokens=chunk, show_progress=False)
-        np.testing.assert_allclose(got, expected, rtol=1e-5, atol=1e-5)
+        for q_chunk in (1, 5, 1000):  # one query per pass ... all queries in one pass
+            got = maxsim_scores(q_flat, q_off, d_flat, d_off, chunk_tokens=chunk, show_progress=False,
+                                q_chunk_tokens=q_chunk)
+            np.testing.assert_allclose(got, expected, rtol=1e-5, atol=1e-5)
 
 
 def test_subset_ragged():

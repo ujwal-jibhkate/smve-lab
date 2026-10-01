@@ -1,11 +1,11 @@
 {
   "run": "bm25",
   "title": "BM25 (k1=1.2, b=0.75) \u00b7 SciFact",
-  "dataset": "BeIR/scifact",
+  "dataset": "scifact",
   "n_queries": 300,
   "n_docs": 5183,
   "depth": 100,
-  "created_at": "2026-10-01T01:07:05+00:00",
+  "created_at": "2026-10-01T03:45:35+00:00",
   "method": "bm25",
   "label": "BM25",
   "split": "test",
@@ -14,11 +14,11 @@
     "b": 0.75
   },
   "timing": {
-    "index_build_seconds": 0.712,
-    "query_encode_seconds": 0.0035,
-    "scoring_seconds": 0.0094,
-    "online_seconds": 0.0128,
-    "single_query_latency_ms": 1.045
+    "index_build_seconds": 0.7,
+    "query_encode_seconds": 0.0029,
+    "scoring_seconds": 0.0102,
+    "online_seconds": 0.0131,
+    "single_query_latency_ms": 1.057
   },
   "index": {
     "description": "BM25 weights per (doc, term), CSR",

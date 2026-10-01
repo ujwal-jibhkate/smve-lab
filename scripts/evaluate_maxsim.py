@@ -19,30 +19,31 @@ from pathlib import Path
 
 import numpy as np
 
-from smve_lab.config import ARTIFACTS_DIR, RESULTS_DIR
 from smve_lab.evaluation import Timer, evaluate_and_save, median_latency_ms
 from smve_lab.maxsim import maxsim_scores, subset_ragged
-from smve_lab.scifact import load_qrels
+from smve_lab.datasets import DATASETS, emb_dir, info, load_qrels, results_dir
 from smve_lab.storage import load_separate
-
-EMB_DIR = ARTIFACTS_DIR / "embeddings" / "scifact_bgem3"
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--dataset", default="scifact", choices=list(DATASETS))
     p.add_argument("--split", default="test", choices=["test", "train"], help="qrels split (BEIR reports test)")
     p.add_argument("--depth", type=int, default=100, help="docs kept per query in the run")
     p.add_argument("--chunk-tokens", type=int, default=32_768, help="doc tokens per matmul; lower = less RAM")
     p.add_argument("--latency-queries", type=int, default=5, help="single-query latency samples (0 = skip)")
-    p.add_argument("--out-dir", type=Path, default=RESULTS_DIR / "scifact_bgem3" / "colbert_maxsim")
+    p.add_argument("--out-dir", type=Path, default=None, help="default: results/{dataset}_bgem3/colbert_maxsim")
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    EMB_DIR = emb_dir(args.dataset)
+    ds = info(args.dataset)
+    out_dir = args.out_dir or results_dir(args.dataset) / "colbert_maxsim"
 
     # 1. Ground truth: which docs are relevant for which query.
-    qrels = load_qrels(args.split)
+    qrels = load_qrels(args.dataset, args.split)
     print(f"qrels[{args.split}]: {len(qrels)} queries, {sum(len(v) for v in qrels.values())} judgments")
 
     # 2. Embeddings. Doc ColBERT vectors (~3.8 GB) stay memory-mapped on disk.
@@ -77,14 +78,16 @@ def main() -> None:
 
     # 5. Rank, evaluate, store, plot.
     evaluate_and_save(
-        scores, query_ids, doc_ids, qrels, args.out_dir,
+        scores, query_ids, doc_ids, qrels, out_dir,
         run_id="bgem3_colbert_maxsim",
-        run_title="BGE-M3 ColBERT · exhaustive MaxSim · SciFact",
+        run_title=f"BGE-M3 ColBERT · exhaustive MaxSim · {ds.display}",
+        ignore_identical_ids=ds.ignore_identical_ids,
         depth=args.depth,
         score_norm=np.diff(q_offsets),
         summary_extra={
             "method": "maxsim",
             "split": args.split,
+            "dataset": args.dataset,
             "timing": {
                 "index_build_seconds": 0.0,
                 "query_encode_seconds": 0.0,

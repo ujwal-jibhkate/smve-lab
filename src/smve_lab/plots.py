@@ -789,7 +789,7 @@ def _pareto(df: pd.DataFrame, cost: str, quality: str) -> pd.DataFrame:
     return d.loc[keep]
 
 
-def plot_first_stage_frontiers(runs: pd.DataFrame, refs: pd.DataFrame, path: Path) -> None:
+def plot_first_stage_frontiers(runs: pd.DataFrame, refs: pd.DataFrame, path: Path, dataset: str = "SciFact") -> None:
     """Rows = quality metric, columns = cost; dots = every setting, lines = Pareto frontier per family."""
     _style()
     from matplotlib.ticker import FuncFormatter, NullFormatter
@@ -818,7 +818,7 @@ def plot_first_stage_frontiers(runs: pd.DataFrame, refs: pd.DataFrame, path: Pat
                 ax.set_ylabel(qlabel)
     handles, labels = axes[0, 0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=4, bbox_to_anchor=(0.5, 0), fontsize=9.5)
-    fig.suptitle("First stages on SciFact: SMVE vs MUVERA vs references  ·  faint dots = every setting",
+    fig.suptitle(f"First stages on {dataset}: SMVE vs MUVERA vs references  ·  faint dots = every setting",
                  x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
     fig.tight_layout(rect=(0, 0.07, 1, 0.96))
     _save(fig, path)
@@ -868,4 +868,49 @@ def plot_index_latency(summary: pd.DataFrame, per_query: pd.DataFrame, path: Pat
     fig.suptitle("Sparse retrieval with a hand-built inverted index  ·  SciFact, 300 queries, one at a time",
                  x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
+    _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# Cross-dataset summary (scripts/cross_dataset_summary.py)
+# ---------------------------------------------------------------------------
+
+CROSS_METHODS = {  # fixed colour per method across both panels
+    "Exhaustive MaxSim": TEXT, "BM25": SERIES[5], "BGE-M3 dense": TEXT_2,
+    "BGE-M3 dense + lexical": SERIES[2], "SMVE (fixed setting)": SERIES[0], "MUVERA (fixed setting)": SERIES[1],
+}
+
+
+def plot_cross_dataset(table: pd.DataFrame, head: pd.DataFrame, path: Path) -> None:
+    """(A) first stage alone, (B) first stage + MaxSim rerank of top 100; grouped by dataset."""
+    _style()
+    datasets = list(dict.fromkeys(table["dataset"]))
+    fig, axes = plt.subplots(1, 2, figsize=(15, 5.6))
+    panels = [(axes[0], "ndcg@10", list(CROSS_METHODS), "First stage alone"),
+              (axes[1], "rerank_ndcg@10", [m for m in CROSS_METHODS if m != "Exhaustive MaxSim"],
+               "First stage + MaxSim rerank of top 100  (black line = exhaustive MaxSim)")]
+    for ax, col, methods, title in panels:
+        width = 0.8 / len(methods)
+        x = np.arange(len(datasets))
+        for j, m in enumerate(methods):
+            vals = [table[(table.dataset == d) & (table.method == m)][col].iloc[0] for d in datasets]
+            xs = x - 0.4 + width * (j + 0.5)
+            ax.bar(xs, vals, width=width, color=CROSS_METHODS[m], edgecolor=SURFACE, linewidth=1.5, label=m)
+            for xi, v in zip(xs, vals):
+                ax.text(xi, v + 0.006, f"{v:.2f}", ha="center", va="bottom", fontsize=7, color=TEXT, rotation=90)
+        if col == "rerank_ndcg@10":
+            for xi, d in zip(x, datasets):
+                ms = table[(table.dataset == d) & (table.method == "Exhaustive MaxSim")]["ndcg@10"].iloc[0]
+                ax.plot([xi - 0.42, xi + 0.42], [ms, ms], color=TEXT, lw=2)
+        hr = head.set_index("dataset")["headroom vs dense"]
+        ax.set_xticks(x, [f"{d}\nheadroom vs dense {hr[d]:+.3f}" for d in datasets])
+        ax.grid(axis="x", visible=False)
+        ax.set_ylim(0, table[col].max() * 1.18)
+        ax.set_ylabel("nDCG@10")
+        ax.set_title(title, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=len(labels), bbox_to_anchor=(0.5, 0), fontsize=9.5)
+    fig.suptitle("All methods across datasets  ·  SMVE / MUVERA at one fixed setting chosen on SciFact",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.95))
     _save(fig, path)

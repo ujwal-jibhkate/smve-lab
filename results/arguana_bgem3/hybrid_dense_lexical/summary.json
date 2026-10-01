@@ -1,0 +1,63 @@
+{
+  "run": "bgem3_hybrid_dense_lexical",
+  "title": "BGE-M3 dense + 0.3\u00b7lexical \u00b7 ArguAna",
+  "dataset": "arguana",
+  "n_queries": 1406,
+  "n_docs": 8674,
+  "depth": 100,
+  "created_at": "2026-10-01T05:00:42+00:00",
+  "method": "hybrid_dense_lexical",
+  "label": "BGE-M3 dense + 0.3\u00b7lexical",
+  "split": "test",
+  "params": {
+    "alpha": 0.3
+  },
+  "timing": {
+    "index_build_seconds": 0.0,
+    "query_encode_seconds": 0.0,
+    "scoring_seconds": 0.3362,
+    "online_seconds": 0.3362,
+    "single_query_latency_ms": 3.858
+  },
+  "index": {
+    "description": "dense vectors + lexical CSR",
+    "bytes": 43143292
+  },
+  "metrics": {
+    "ndcg@1": 0.24538,
+    "ndcg@3": 0.38036,
+    "ndcg@5": 0.43526,
+    "ndcg@10": 0.49864,
+    "ndcg@20": 0.52528,
+    "ndcg@50": 0.53619,
+    "ndcg@100": 0.5392,
+    "recall@1": 0.24538,
+    "recall@3": 0.48293,
+    "recall@5": 0.61664,
+    "recall@10": 0.81223,
+    "recall@20": 0.91536,
+    "recall@50": 0.96942,
+    "recall@100": 0.98791,
+    "precision@1": 0.24538,
+    "precision@3": 0.16098,
+    "precision@5": 0.12333,
+    "precision@10": 0.08122,
+    "precision@20": 0.04577,
+    "precision@50": 0.01939,
+    "precision@100": 0.00988,
+    "mrr@1": 0.24538,
+    "mrr@3": 0.34519,
+    "mrr@5": 0.37556,
+    "mrr@10": 0.40178,
+    "mrr@20": 0.40939,
+    "mrr@50": 0.41122,
+    "mrr@100": 0.41148,
+    "map@1": 0.24538,
+    "map@3": 0.34519,
+    "map@5": 0.37556,
+    "map@10": 0.40178,
+    "map@20": 0.40939,
+    "map@50": 0.41122,
+    "map@100": 0.41148
+  }
+}

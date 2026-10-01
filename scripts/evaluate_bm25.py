@@ -7,15 +7,20 @@ Writes results/scifact_bgem3/bm25/ in the standard layout.
 
 from __future__ import annotations
 
+import argparse
+
 from smve_lab.bm25 import BM25
-from smve_lab.config import RESULTS_DIR
 from smve_lab.evaluation import Timer, evaluate_and_save, median_latency_ms
-from smve_lab.scifact import load_qrels, load_scifact
+from smve_lab.datasets import DATASETS, info, load_qrels, load_texts, results_dir
 
 
 def main() -> None:
-    qrels = load_qrels("test")
-    _, _, _, doc_ids, doc_texts, all_qids, q_texts = load_scifact()
+    p = argparse.ArgumentParser()
+    p.add_argument("--dataset", default="scifact", choices=list(DATASETS))
+    args = p.parse_args()
+    ds = info(args.dataset)
+    qrels = load_qrels(args.dataset)
+    doc_ids, doc_texts, all_qids, q_texts = load_texts(args.dataset)
     q_text = dict(zip(all_qids, q_texts))
     query_ids = list(qrels)
     queries = [q_text[q] for q in query_ids]
@@ -30,10 +35,11 @@ def main() -> None:
     print(f"index {t_index.seconds:.1f}s · vocab {len(bm.vocab):,} · single query {latency:.2f} ms")
 
     evaluate_and_save(
-        scores, query_ids, doc_ids, qrels, RESULTS_DIR / "scifact_bgem3" / "bm25",
-        run_id="bm25", run_title="BM25 (k1=1.2, b=0.75) · SciFact",
+        scores, query_ids, doc_ids, qrels, results_dir(args.dataset) / "bm25",
+        run_id="bm25", run_title=f"BM25 (k1=1.2, b=0.75) · {ds.display}",
+        ignore_identical_ids=ds.ignore_identical_ids,
         summary_extra={
-            "method": "bm25", "label": "BM25", "split": "test",
+            "method": "bm25", "label": "BM25", "split": "test", "dataset": args.dataset,
             "params": {"k1": bm.k1, "b": bm.b},
             "timing": {"index_build_seconds": round(t_index.seconds, 3),
                        "query_encode_seconds": round(t_q.seconds, 4),
