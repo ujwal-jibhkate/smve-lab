@@ -765,3 +765,107 @@ def plot_rerank_cost(summary: pd.DataFrame, refs: dict, path: Path) -> None:
     fig.suptitle("Cost of each pipeline (log scale)", x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# First-stage comparison (scripts/compare_first_stages.py)
+# ---------------------------------------------------------------------------
+
+FAMILY_COLOR = {"SMVE": SERIES[0], "MUVERA": SERIES[1]}
+FS_REF_STYLE = {  # reference first stages: (colour, marker)
+    "Exhaustive MaxSim": (TEXT, "*"), "BM25": (SERIES[5], "P"), "BGE-M3 dense": (TEXT_2, "s"),
+    "BGE-M3 lexical": (SERIES[3], "X"), "BGE-M3 dense + lexical": (SERIES[2], "D"),
+}
+
+
+def _pareto(df: pd.DataFrame, cost: str, quality: str) -> pd.DataFrame:
+    """Settings not beaten by another setting that is both cheaper and better."""
+    d = df.sort_values([cost, quality], ascending=[True, False])
+    keep, best = [], -np.inf
+    for i, r in d.iterrows():
+        if r[quality] > best:
+            keep.append(i)
+            best = r[quality]
+    return d.loc[keep]
+
+
+def plot_first_stage_frontiers(runs: pd.DataFrame, refs: pd.DataFrame, path: Path) -> None:
+    """Rows = quality metric, columns = cost; dots = every setting, lines = Pareto frontier per family."""
+    _style()
+    from matplotlib.ticker import FuncFormatter, NullFormatter
+    rows = [("recall@100", "Recall@100 (first stage)"), ("ndcg@10", "nDCG@10 (first stage alone)"),
+            ("rerank_ndcg@10", "nDCG@10 after MaxSim rerank of top 100")]
+    cols = [("index_mb", "index size, MB (log)"), ("single_query_latency_ms", "single-query latency, ms (log)")]
+    fig, axes = plt.subplots(len(rows), len(cols), figsize=(13, 4.2 * len(rows)), sharex="col", sharey="row")
+    for i, (q, qlabel) in enumerate(rows):
+        for j, (c, clabel) in enumerate(cols):
+            ax = axes[i, j]
+            for fam, color in FAMILY_COLOR.items():
+                g = runs[runs.family == fam]
+                ax.scatter(g[c], g[q], s=16, color=color, alpha=0.35, linewidths=0, zorder=2)
+                f = _pareto(g, c, q)
+                ax.plot(f[c], f[q], color=color, lw=2.2, marker="o", markersize=4, zorder=3, label=f"{fam} (best at each cost)")
+            for _, r in refs.iterrows():
+                color, marker = FS_REF_STYLE[r["name"]]
+                ax.scatter(r[c], r[q], marker=marker, s=150 if marker == "*" else 70, color=color,
+                           edgecolors=SURFACE, linewidths=1, zorder=4, label=r["name"])
+            ax.set_xscale("log")
+            ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+            ax.xaxis.set_minor_formatter(NullFormatter())
+            if i == len(rows) - 1:
+                ax.set_xlabel(clabel)
+            if j == 0:
+                ax.set_ylabel(qlabel)
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4, bbox_to_anchor=(0.5, 0), fontsize=9.5)
+    fig.suptitle("First stages on SciFact: SMVE vs MUVERA vs references  ·  faint dots = every setting",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.96))
+    _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# Inverted-index latency (scripts/evaluate_inverted_index.py)
+# ---------------------------------------------------------------------------
+
+def plot_index_latency(summary: pd.DataFrame, per_query: pd.DataFrame, path: Path) -> None:
+    """(A) median latency split into encode / score / top-k; (B) work per query vs scoring time."""
+    _style()
+    from matplotlib.ticker import FuncFormatter, NullFormatter
+    fig, axes = plt.subplots(1, 2, figsize=(15, 0.5 * len(summary) + 3.6),
+                             gridspec_kw={"width_ratios": [1.15, 1]})
+    ax = axes[0]
+    y = np.arange(len(summary))[::-1]
+    parts = [("encode_ms", "encode query", SERIES[0]), ("score_ms", "read postings / scan", SERIES[1]),
+             ("topk_ms", "pick top 100", SERIES[2])]
+    left = np.zeros(len(summary))
+    for col, label, color in parts:
+        ax.barh(y, summary[col], left=left, height=0.62, color=color, edgecolor=SURFACE, linewidth=2, label=label)
+        left += summary[col].to_numpy()
+    for yi, tot, old in zip(y, summary["total_ms"], summary["old_latency_ms"]):
+        ax.text(tot, yi, f"  {tot:.2f} ms   (was {old:.1f} ms)", va="center", fontsize=8.5, color=TEXT)
+    ax.set_yticks(y, summary["method"])
+    ax.set_xlim(0, summary["total_ms"].max() * 1.6)
+    ax.grid(axis="y", visible=False)
+    ax.set_xlabel("median single-query latency, ms (CPU)")
+    ax.set_title("Where the time goes", loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    ax.legend(loc="lower right")
+
+    ax = axes[1]
+    sparse = per_query.dropna(subset=["postings_read"])
+    for i, (m, g) in enumerate(sparse.groupby("method", sort=False)):
+        ax.scatter(g["postings_read"], g["score_ms"], s=12, alpha=0.55, color=SERIES[i % len(SERIES)],
+                   linewidths=0, label=m)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    for a in (ax.xaxis, ax.yaxis):
+        a.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+        a.set_minor_formatter(NullFormatter())
+    ax.set_xlabel("posting entries read by the query (log)")
+    ax.set_ylabel("scoring time, ms (log)")
+    ax.set_title("Work per query drives scoring time", loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    ax.legend(loc="upper left", fontsize=8.5, markerscale=2)
+    fig.suptitle("Sparse retrieval with a hand-built inverted index  ·  SciFact, 300 queries, one at a time",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    _save(fig, path)
