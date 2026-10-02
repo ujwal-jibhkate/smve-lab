@@ -133,8 +133,8 @@ def main() -> None:
           f"median latency A {out.A_latency_ms.median():.0f} ms, B {out.B_latency_ms.median():.0f} ms -> {path}")
 
 
-def first_stage_tops(ds: str, rows: pd.DataFrame) -> dict:
-    """Top-3 first-stage documents per (split, query): dense + 0.3 * lexical, self-matches removed."""
+def first_stage_tops(ds: str, rows: pd.DataFrame, n: int = TOP_N) -> dict:
+    """Top-n first-stage documents per (split, query): dense + 0.3 * lexical, self-matches removed."""
     import scipy.sparse as sp
 
     from build_router_data import ALPHA, VOCAB
@@ -159,7 +159,7 @@ def first_stage_tops(ds: str, rows: pd.DataFrame) -> dict:
     for i, (split, q) in enumerate(zip(rows.split, rows.query_id)):
         if info(ds).ignore_identical_ids and q in col:
             hyb[i, col[q]] = -np.inf
-        out[(split, q)] = [doc_ids[j] for j in np.argsort(-hyb[i])[:TOP_N]]
+        out[(split, q)] = [doc_ids[j] for j in np.argsort(-hyb[i])[:n]]
     return out
 
 

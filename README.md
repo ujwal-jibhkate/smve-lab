@@ -31,6 +31,7 @@ four stages on three BEIR datasets with the **same BGE-M3 embeddings for every m
 | **Real latency** | With a hand-built inverted index SMVE drops from 87 ms to **19 ms** per query; ~90 % of that is projecting the query onto a 268 MB anchor matrix. SMVE queries read **~58× more postings than BM25**. |
 | **Best pipelines** | Cheap: **BM25 → MaxSim rerank (0.709)** beats exhaustive MaxSim on SciFact (a first stage should *complement* its reranker). Best quality: dense + lexical → `bge-reranker-v2-m3` @20 (**0.731**, ~1.6 s/query). |
 | **Routing** | An oracle that calls the cross-encoder only when it helps would be *better and ~5–6× cheaper* than always calling it. Real routers capture ~20–27 % of that. **Jev** adds real signal on SciFact (+0.08 AUC when combined with first-stage features, p = 0.001), not on ArguAna. |
+| **Jev as the reranker** | Reranking the same top 20, **Jev beats `bge-reranker-v2-m3` significantly on SciFact (0.784 vs 0.731) and NFCorpus (0.366 vs 0.342)**. On ArguAna the cross-encoder wins against per-pair Jev and ties Jev's one-call-per-query variant (0.692 vs 0.698). ~160–260 ms per query via API, ~$0.0003–0.0007 per query. |
 
 <p align="center">
   <img src="results/cross_dataset/plots/cross_dataset.png" width="100%" alt="All methods across datasets">
@@ -396,6 +397,46 @@ every query. 2,838 queries × 2 calls cost **$0.23**.
 - **ArguAna resists every router**, where the cross-encoder matters most (+0.20). There, always escalate.
 - **Calibration has a catch**: Jev is calibrated for *its* question, not for "will the cross-encoder help?". Raw answers have ECE 0.10–0.35; a small trained model fixes that within a dataset, but not across datasets.
 
+### 6.4 Jev as the reranker itself
+
+If Jev can judge which candidate is better, can it *replace* the cross-encoder? Same first stage, same top 20, on all
+2,029 test queries, with three ways of asking (wording fixed before any results; task lines are the standard
+[E5-mistral](https://arxiv.org/abs/2401.00368) per-dataset instructions):
+
+```mermaid
+flowchart LR
+    Q["Query + first-stage top 20"] --> V1["V1 · 20 calls<br/>Noul per candidate:<br/>does it directly address the query?"]
+    Q --> V2["V2 · 20 calls<br/>same + task line<br/>(e.g. 'find documents that refute the claim')"]
+    Q --> V3["V3 · 1 call<br/>Choice over all 20:<br/>which should rank first?"]
+    V1 --> S["sort by P(yes) / P(option)<br/>ties keep first-stage order"]
+    V2 --> S
+    V3 --> S
+```
+
+<p align="center">
+  <img src="results/jev_rerank/plots/jev_rerank.png" width="100%" alt="Jev vs cross-encoder as the reranker">
+</p>
+
+| nDCG@10, rerank top 20 | SciFact (300) | NFCorpus (323) | ArguAna (1,406) | one query |
+|---|---|---|---|---|
+| first stage only | 0.684 | 0.328 | 0.498 | ~3 ms |
+| cross-encoder `bge-reranker-v2-m3` (laptop GPU) | 0.731 | 0.342 | **0.698** | ~1,630 ms |
+| **Jev V1** · per pair, generic | **0.784** | **0.366** | 0.614 | 193–244 ms |
+| **Jev V2** · per pair, + task | 0.778 | 0.366 | 0.628 | 204–258 ms |
+| **Jev V3** · one Choice per query, + task | 0.781 | 0.361 | 0.692 | **159–188 ms** |
+
+| Jev − cross-encoder (paired, 95 % CI) | SciFact | NFCorpus | ArguAna |
+|---|---|---|---|
+| V1 | **+0.053** [+0.031, +0.076] | **+0.024** [+0.014, +0.034] | −0.084 [−0.100, −0.068] |
+| V2 | **+0.047** [+0.025, +0.069] | **+0.024** [+0.014, +0.033] | −0.070 [−0.088, −0.053] |
+| V3 | **+0.051** [+0.027, +0.074] | **+0.019** [+0.009, +0.029] | −0.006 [−0.022, +0.011] |
+
+- **On SciFact and NFCorpus, Jev is the best reranker tested**, significantly, for every variant.
+- **ArguAna needs comparison, not isolated scoring.** Even told the task, per-pair Jev can't single out *the* counter-argument among other disagreeing arguments. Seeing all 20 at once (V3) recovers a tie.
+- **V3 is the practical choice**: one request per query, fastest, ~half the tokens, never significantly worse than the cross-encoder. Per-pair variants need 20 requests per query against a 40 req/s rate limit.
+- **A cautionary pilot**: on 50 queries V3 looked +0.07 ahead on ArguAna; on all 1,406 it's −0.006.
+- **Caveat**: the latency comparison is hardware, not method: the cross-encoder ran on a laptop GPU, Jev on TypeSafe's servers. Neither model's training data can be ruled out from overlapping these public datasets. Full run cost: **$3.24**.
+
 ---
 
 ## 7. Conclusions
@@ -419,9 +460,14 @@ every query. 2,838 queries × 2 calls cost **$0.23**.
 4. Check the **oracle** before building a router.
 5. Fix settings and questions **before** looking at test results; use **paired** tests on the same queries.
 
+**On reranking:** a fast decision model (Jev) reranked better than a dedicated cross-encoder on two of three datasets,
+and tied it on the third once it could compare candidates side by side. The best overall pipelines we found are
+**dense + lexical → Jev V3 rerank** (quality) and **BM25 / dense + lexical → MaxSim** (cost).
+
 **Natural next steps:** ColBERT-only models without a strong dense head (ColBERTv2, ModernColBERT), where SMVE's
-headroom should be larger; **Jev as the reranker** itself; faster query encoding (fp16 / structured anchors);
-dynamic pruning for long SMVE queries at million-document scale.
+headroom should be larger; Jev reranking with deeper candidate lists and a cross-encoder on server-class hardware for a
+fair latency comparison; faster SMVE query encoding (fp16 / structured anchors); dynamic pruning for long SMVE queries
+at million-document scale.
 
 ---
 
@@ -433,6 +479,7 @@ dynamic pruning for long SMVE queries at million-document scale.
 - **Mostly one seed** per SMVE/MUVERA setting (seed noise measured at ±0.005–0.02 nDCG@10 for key settings).
 - **Exhaustive** (unpruned) inverted index; real engines would read fewer postings for short queries.
 - **Routing labels** use nDCG@10 changes, which are coarse for single-relevant-document datasets (many ties).
+- **Reranker latency** compares a laptop GPU (cross-encoder) with a hosted API (Jev); only the quality comparison is like for like. Jev's training data is undisclosed.
 
 ---
 
@@ -491,6 +538,9 @@ echo "TYPESAFE_API_KEY=..." > .env                      # git-ignored
 uv run python scripts/jev_router.py --pilot 50          # optional pilot
 uv run python scripts/jev_router.py                     # all queries (~$0.23, cached)
 uv run python scripts/evaluate_jev_router.py            # Jev vs baselines + paired tests
+
+uv run python scripts/jev_rerank.py --pilot 50          # Jev as the reranker: pilot (~$0.25)
+uv run python scripts/jev_rerank.py --latency-queries 10   # full run (~$3, cached) + live latency probe
 ```
 </details>
 
@@ -520,7 +570,8 @@ smve-lab/
 │   ├── <dataset>_bgem3/     per-method summary.json, per_query.csv, metrics_at_k.csv, plots/
 │   ├── smve_mechanism/      token-pair study
 │   ├── cross_dataset/       all methods × all datasets, headroom
-│   └── router/              routing data, baselines, Jev answers and reports
+│   ├── router/              routing data, baselines, Jev answers and reports
+│   └── jev_rerank/          Jev vs cross-encoder as the reranker
 ├── docs/                    plain-language explainers with the maths and intuition
 │   ├── repetitions_explained.md
 │   ├── stage3_explained.md
@@ -542,3 +593,4 @@ smve-lab/
 - Mu & Viswanath, *All-but-the-Top: Simple and Effective Postprocessing for Word Representations*, ICLR 2018. [arXiv:1702.01417](https://arxiv.org/abs/1702.01417)
 - TypeSafe, *Introducing System One Models & Jev*, 2026. [typesafe.ai blog](https://typesafe.ai/blog/introducing-system-one-models-and-jev) · [docs](https://docs.typesafe.ai/)
 - BAAI, [`bge-reranker-v2-m3`](https://huggingface.co/BAAI/bge-reranker-v2-m3)
+- Wang et al., *Improving Text Embeddings with Large Language Models* (E5-mistral; source of the per-dataset task instructions), 2024. [arXiv:2401.00368](https://arxiv.org/abs/2401.00368)

@@ -1097,3 +1097,67 @@ def plot_jev_calibration(data: pd.DataFrame, probs: dict, path: Path, bins: int 
                  x=0.04, ha="left", fontsize=13, fontweight="bold", color=TEXT)
     fig.tight_layout(rect=(0, 0.08, 1, 0.94))
     _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# Jev as the reranker (scripts/jev_rerank.py)
+# ---------------------------------------------------------------------------
+
+RERANK_METHOD_COLOR = {
+    "first stage": TEXT_2, "base (MaxSim@10)": SERIES[3], "cross-encoder": SERIES[1],
+    "Jev V1": SERIES[6], "Jev V2": SERIES[0], "Jev V3": SERIES[2],
+}
+
+
+def plot_jev_rerank(summary: pd.DataFrame, latency: dict, path: Path) -> None:
+    """(A) nDCG@10 per dataset and method; (B) nDCG@10 vs single-query latency."""
+    _style()
+    from matplotlib.ticker import FuncFormatter, NullFormatter
+    from smve_lab.datasets import info as ds_info
+    datasets = list(dict.fromkeys(summary["dataset"]))
+    methods = [m for m in RERANK_METHOD_COLOR if m in set(summary["method"])]
+    fig, axes = plt.subplots(1, 2, figsize=(15, 5.4), gridspec_kw={"width_ratios": [1.3, 1]})
+    ax = axes[0]
+    width = 0.8 / len(methods)
+    x = np.arange(len(datasets))
+    for j, m in enumerate(methods):
+        vals = [summary[(summary.dataset == d) & (summary.method == m)]["ndcg@10"].iloc[0] for d in datasets]
+        xs = x - 0.4 + width * (j + 0.5)
+        ax.bar(xs, vals, width=width, color=RERANK_METHOD_COLOR[m], edgecolor=SURFACE, linewidth=1.5, label=m)
+        for xi, v in zip(xs, vals):
+            ax.text(xi, v + 0.006, f"{v:.3f}", ha="center", va="bottom", fontsize=7, rotation=90, color=TEXT)
+    ax.set_xticks(x, [ds_info(d).display for d in datasets])
+    ax.grid(axis="x", visible=False)
+    ax.set_ylim(0, summary["ndcg@10"].max() * 1.2)
+    ax.set_ylabel("nDCG@10")
+    ax.set_title("Reranking the first stage's top 20", loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    ax.legend(loc="upper left", bbox_to_anchor=(0, -0.08), ncol=3, fontsize=9)
+
+    ax = axes[1]
+    markers = {"scifact": "o", "nfcorpus": "s", "arguana": "D"}
+    for d in datasets:
+        for m in methods:
+            if m == "cross-encoder":
+                lat = latency[d]["cross_encoder_ms"]
+            elif m.startswith("Jev"):
+                lat = latency[d].get("jev_ms", {}).get(m.split()[1])
+            elif m == "first stage":
+                lat = latency[d]["first_stage_ms"]
+            else:
+                lat = None
+            if lat:
+                v = summary[(summary.dataset == d) & (summary.method == m)]["ndcg@10"].iloc[0]
+                ax.scatter(lat, v, s=70, marker=markers[d], color=RERANK_METHOD_COLOR[m], edgecolors=SURFACE, zorder=3)
+    ax.set_xscale("log")
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+    ax.xaxis.set_minor_formatter(NullFormatter())
+    ax.set_xlabel("single-query latency, ms (log)")
+    ax.set_ylabel("nDCG@10")
+    handles = [plt.Line2D([], [], marker=mk, ls="", color=TEXT_2, label=ds_info(d).display) for d, mk in markers.items()
+               if d in datasets]
+    ax.legend(handles=handles, loc="center left", fontsize=9)
+    ax.set_title("Quality vs latency  ·  colour = method", loc="left", fontsize=12, fontweight="bold", color=TEXT)
+    fig.suptitle("Jev (API) vs bge-reranker-v2-m3 (local GPU) as the reranker", x=0.04, ha="left", fontsize=14,
+                 fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    _save(fig, path)

@@ -45,12 +45,12 @@ class Jev:
         blob = json.dumps({"model": self.model, "state": state, "questions": questions}, sort_keys=True)
         return hashlib.sha256(blob.encode()).hexdigest()
 
-    def ask(self, state, questions: dict) -> dict:
+    def ask(self, state, questions: dict, use_cache: bool = True) -> dict:
         """One request. `questions` are plain dicts in the HTTP API format. Returns
         {"answers": {name: P(yes) for Nouls / probabilities dict for Choices},
          "latency_ms": ..., "input_tokens": ..., "cached": bool}."""
         key = self._key(state, questions)
-        if key in self.cache:
+        if use_cache and key in self.cache:
             return {**self.cache[key], "cached": True}
         t = time.perf_counter()
         r = self.client.system_one(state=state, questions=questions)
@@ -60,6 +60,8 @@ class Jev:
             answers[name] = a.noul if a.type == "noul" else dict(a.probabilities)
         rec = {"key": key, "answers": answers, "latency_ms": latency,
                "input_tokens": r.usage.input_tokens or 0, "model": r.model}
+        if not use_cache:  # latency probes: live call, don't touch the cache
+            return {**rec, "cached": False}
         with self._lock:
             self.cache[key] = rec
             with open(self.cache_path, "a") as f:

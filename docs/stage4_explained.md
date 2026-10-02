@@ -5,11 +5,12 @@ Stage 4 asked one practical question:
 > A cross-encoder reranks better than anything else we have, but it costs about **1.6 seconds** per query.
 > Can we call it **only for the queries it will actually help**, and skip it for the rest?
 
-It had two parts:
+It had two parts, plus a follow-up:
 
 - **4a** build a per-query dataset of "did the cross-encoder help?", and test cheap routers that decide
   from first-stage scores
 - **4b** use **Jev**, a fast decision model, as the router, and compare it fairly with 4a
+- **follow-up** use Jev **as the reranker itself**, against the cross-encoder (section 8)
 
 Like the earlier notes, everything is explained from scratch, with small formulas and intuition.
 The cross-encoder itself was introduced in stage 2; section 1 recaps it.
@@ -306,7 +307,85 @@ Cost of the whole Jev experiment: **2,838 queries × 2 calls = 5.6 M tokens ≈ 
 
 ---
 
-## 8. The whole project in one page
+## 8. Jev as the reranker itself
+
+The router results raised an obvious question: if Jev can tell when "a lower candidate is better", can it
+**do the reranking itself**, instead of only deciding whether to call the cross-encoder?
+
+### The setup
+
+Exactly the stage-4 setting: the dense + lexical first stage, rerank its **top 20**, all 2,029 test queries.
+The cross-encoder's scores for these exact pairs were already cached, so the comparison is like for like.
+Three ways of asking Jev, worded **before** any results were seen:
+
+| variant | requests per query | what Jev sees | question |
+|---|---|---|---|
+| **V1** | 20 | query + **one** candidate | Noul: "Does the candidate directly and specifically address the query?" |
+| **V2** | 20 | query + one candidate + **task line** | Noul: "Following the task, should this candidate be returned for the query?" |
+| **V3** | **1** | query + **all 20** candidates + task line | Choice: "Which candidate should be ranked first?" |
+
+Each candidate gets a score (P(yes) for V1/V2; its Choice probability for V3) and the 20 are sorted by it.
+Jev reports probabilities in steps of 0.01, so **ties keep the first stage's order**.
+
+**Why a task line?** "Relevant" means different things per dataset. On ArguAna the right document *refutes*
+the query; a generic relevance question would reward arguments that *agree* with it. The task lines are the standard
+per-dataset instructions from the E5-mistral paper, e.g. *"Given a claim, find documents that refute the claim."*
+Using published wording, not wording tuned here, keeps it fair.
+
+**Per-pair vs one call.** V1/V2 follow TypeSafe's re-ranking cookbook: each candidate judged **alone**, so
+nothing else in the state can distract (an *absolute* judgment). V3 shows Jev everything at once and asks a
+**relative** question. That needs one request instead of twenty, but the state is larger, which Jev's docs flag as a risk.
+
+### A 50-query pilot first, then the full run
+
+The pilot (50 queries per dataset, ~$0.25) checked cost and latency. It looked spectacular, including V3
+**+0.07 ahead of the cross-encoder on ArguAna**. The full run tells a more careful story.
+
+### Results (nDCG@10)
+
+| | SciFact (300) | NFCorpus (323) | ArguAna (1,406) | one query |
+|---|---|---|---|---|
+| first stage only | 0.684 | 0.328 | 0.498 | ~3 ms |
+| cross-encoder (laptop GPU) | 0.731 | 0.342 | **0.698** | ~1,630 ms |
+| **Jev V1** | **0.784** | **0.366** | 0.614 | 193–244 ms |
+| **Jev V2** | 0.778 | 0.366 | 0.628 | 204–258 ms |
+| **Jev V3** | 0.781 | 0.361 | 0.692 | **159–188 ms** |
+
+Paired bootstrap, Jev − cross-encoder (95 % CI):
+
+| | SciFact | NFCorpus | ArguAna |
+|---|---|---|---|
+| V1 | **+0.053** [+0.031, +0.076] | **+0.024** [+0.014, +0.034] | −0.084 [−0.100, −0.068] |
+| V2 | **+0.047** [+0.025, +0.069] | **+0.024** [+0.014, +0.033] | −0.070 [−0.088, −0.053] |
+| V3 | **+0.051** [+0.027, +0.074] | **+0.019** [+0.009, +0.029] | −0.006 [−0.022, +0.011] (tie) |
+
+### What it means
+
+1. **On SciFact and NFCorpus, Jev is the best reranker in this project**, significantly, for every variant.
+   On SciFact it improves 66–69 queries and hurts only 19–22.
+2. **On ArguAna, judging candidates one at a time fails, and comparing them works.** Many candidates disagree with the
+   query; only one is *its* counter-argument. Scored alone (V1/V2), several look equally "refuting". Seen side by side (V3),
+   Jev can pick the closest match and ties the cross-encoder. **For "which one is best" tasks, ask a relative question.**
+3. **V3 is the practical design:** one request per query (V1/V2 need 20, against a 40 requests/second rate limit),
+   the fastest (~160–190 ms), about half the tokens (~$0.0003 per query), and never significantly worse than the cross-encoder.
+4. **The pilot misled on ArguAna** (+0.07 on 50 queries → −0.006 on 1,406). Small pilots are for checking that things
+   work, not for conclusions.
+
+### Caveats
+
+- **The latency comparison is mostly hardware.** The cross-encoder ran on a laptop GPU; on a data-centre GPU it would
+  likely take tens of milliseconds for 20 pairs. Jev runs on TypeSafe's servers and includes the network. The quality
+  comparison is the like-for-like part.
+- **Training data.** Neither model's training data can be ruled out from overlapping these public BEIR datasets
+  (Jev's is undisclosed).
+- **Ties.** 98 distinct Noul values; in V3, 57 % of options get exactly 0 probability, so the tail keeps the first stage's
+  order. That barely affects the top 10.
+
+Cost of the full run: **~80 K requests, ~77 M input tokens, $3.24.**
+
+---
+
+## 9. The whole project in one page
 
 | stage | question | answer (BGE-M3, SciFact / NFCorpus / ArguAna) |
 |---|---|---|
@@ -314,6 +393,7 @@ Cost of the whole Jev experiment: **2,838 queries × 2 calls = 5.6 M tokens ≈ 
 | 2 | How good is SMVE, and how does reranking compare? | Standalone SMVE is below a plain dense vector. A cross-encoder rerank is the most accurate (0.731 on SciFact) but ~200× slower than MaxSim reranking |
 | 3 | SMVE vs alternatives, real cost, more data | SMVE beats MUVERA on storage and ties on latency. Little or negative headroom over dense. BM25 → MaxSim is the best cheap pipeline |
 | 4 | Can we call the cross-encoder only when needed? | Yes in principle (oracle: better *and* 5–6× cheaper). In practice routers capture ~20–27 % of that. Jev helps on SciFact / NFCorpus, not ArguAna |
+| 4+ | Can Jev replace the cross-encoder? | On SciFact / NFCorpus yes, significantly better (0.784 vs 0.731, 0.366 vs 0.342). On ArguAna only when it compares all candidates at once (tie, 0.692 vs 0.698) |
 
 **Lessons that carry over to any retrieval project:**
 
@@ -322,10 +402,11 @@ Cost of the whole Jev experiment: **2,838 queries × 2 calls = 5.6 M tokens ≈ 
 3. A first stage should **complement** its reranker, not imitate it.
 4. Before routing, check the **oracle**. It tells you whether routing can pay at all.
 5. Fix your questions, thresholds and settings **before** looking at test results, and use paired tests on the same queries.
+6. For "which one is best" judgments, ask a **relative** question over all candidates, not an absolute one per candidate.
 
 ---
 
-## 9. Glossary
+## 10. Glossary
 
 | term | meaning |
 |---|---|
@@ -345,3 +426,6 @@ Cost of the whole Jev experiment: **2,838 queries × 2 calls = 5.6 M tokens ≈ 
 | zero-shot | used without any training on our labels |
 | paired bootstrap | resample the same queries many times to test whether a difference is real |
 | overhead | extra latency a router adds to every query |
+| Choice | a Jev question that picks one option and returns a probability per option |
+| relative vs absolute judgment | "which candidate is best?" (compares) vs "is this candidate good?" (alone) |
+| task line | a one-sentence description of what counts as relevant for a dataset (here from E5-mistral) |

@@ -1,0 +1,901 @@
+dataset,query_id,method,ndcg@10,mrr@10,recall@10
+scifact,100,first stage,1.0,1.0,1.0
+scifact,100,cross-encoder,1.0,1.0,1.0
+scifact,100,Jev V1,1.0,1.0,1.0
+scifact,100,Jev V2,1.0,1.0,1.0
+scifact,100,Jev V3,1.0,1.0,1.0
+scifact,100,base (MaxSim@10),1.0,,
+scifact,50,first stage,1.0,1.0,1.0
+scifact,50,cross-encoder,1.0,1.0,1.0
+scifact,50,Jev V1,1.0,1.0,1.0
+scifact,50,Jev V2,1.0,1.0,1.0
+scifact,50,Jev V3,1.0,1.0,1.0
+scifact,50,base (MaxSim@10),1.0,,
+scifact,1144,first stage,1.0,1.0,1.0
+scifact,1144,cross-encoder,1.0,1.0,1.0
+scifact,1144,Jev V1,1.0,1.0,1.0
+scifact,1144,Jev V2,1.0,1.0,1.0
+scifact,1144,Jev V3,1.0,1.0,1.0
+scifact,1144,base (MaxSim@10),1.0,,
+scifact,993,first stage,1.0,1.0,1.0
+scifact,993,cross-encoder,1.0,1.0,1.0
+scifact,993,Jev V1,1.0,1.0,1.0
+scifact,993,Jev V2,1.0,1.0,1.0
+scifact,993,Jev V3,1.0,1.0,1.0
+scifact,993,base (MaxSim@10),1.0,,
+scifact,882,first stage,1.0,1.0,1.0
+scifact,882,cross-encoder,1.0,1.0,1.0
+scifact,882,Jev V1,1.0,1.0,1.0
+scifact,882,Jev V2,1.0,1.0,1.0
+scifact,882,Jev V3,1.0,1.0,1.0
+scifact,882,base (MaxSim@10),1.0,,
+scifact,1140,first stage,1.0,1.0,1.0
+scifact,1140,cross-encoder,1.0,1.0,1.0
+scifact,1140,Jev V1,1.0,1.0,1.0
+scifact,1140,Jev V2,1.0,1.0,1.0
+scifact,1140,Jev V3,1.0,1.0,1.0
+scifact,1140,base (MaxSim@10),1.0,,
+scifact,128,first stage,0.0,0.0,0.0
+scifact,128,cross-encoder,0.0,0.0,0.0
+scifact,128,Jev V1,0.0,0.0,0.0
+scifact,128,Jev V2,0.0,0.0,0.0
+scifact,128,Jev V3,0.0,0.0,0.0
+scifact,128,base (MaxSim@10),0.0,,
+scifact,593,first stage,1.0,1.0,1.0
+scifact,593,cross-encoder,1.0,1.0,1.0
+scifact,593,Jev V1,1.0,1.0,1.0
+scifact,593,Jev V2,1.0,1.0,1.0
+scifact,593,Jev V3,1.0,1.0,1.0
+scifact,593,base (MaxSim@10),1.0,,
+scifact,124,first stage,1.0,1.0,1.0
+scifact,124,cross-encoder,1.0,1.0,1.0
+scifact,124,Jev V1,1.0,1.0,1.0
+scifact,124,Jev V2,1.0,1.0,1.0
+scifact,124,Jev V3,1.0,1.0,1.0
+scifact,124,base (MaxSim@10),1.0,,
+scifact,300,first stage,0.38685280723454163,0.2,1.0
+scifact,300,cross-encoder,0.5,0.3333333333333333,1.0
+scifact,300,Jev V1,1.0,1.0,1.0
+scifact,300,Jev V2,1.0,1.0,1.0
+scifact,300,Jev V3,1.0,1.0,1.0
+scifact,300,base (MaxSim@10),0.5,,
+scifact,613,first stage,1.0,1.0,1.0
+scifact,613,cross-encoder,1.0,1.0,1.0
+scifact,613,Jev V1,1.0,1.0,1.0
+scifact,613,Jev V2,1.0,1.0,1.0
+scifact,613,Jev V3,1.0,1.0,1.0
+scifact,613,base (MaxSim@10),1.0,,
+scifact,982,first stage,1.0,1.0,1.0
+scifact,982,cross-encoder,1.0,1.0,1.0
+scifact,982,Jev V1,1.0,1.0,1.0
+scifact,982,Jev V2,1.0,1.0,1.0
+scifact,982,Jev V3,1.0,1.0,1.0
+scifact,982,base (MaxSim@10),1.0,,
+scifact,690,first stage,1.0,1.0,1.0
+scifact,690,cross-encoder,1.0,1.0,1.0
+scifact,690,Jev V1,1.0,1.0,1.0
+scifact,690,Jev V2,1.0,1.0,1.0
+scifact,690,Jev V3,1.0,1.0,1.0
+scifact,690,base (MaxSim@10),1.0,,
+scifact,343,first stage,0.9197207891481876,1.0,1.0
+scifact,343,cross-encoder,0.5437713091520254,0.3333333333333333,1.0
+scifact,343,Jev V1,0.5706417189553201,0.3333333333333333,1.0
+scifact,343,Jev V2,0.5706417189553201,0.3333333333333333,1.0
+scifact,343,Jev V3,0.4227898344066503,0.16666666666666666,1.0
+scifact,343,base (MaxSim@10),0.9197207891481876,,
+scifact,1298,first stage,1.0,1.0,1.0
+scifact,1298,cross-encoder,1.0,1.0,1.0
+scifact,1298,Jev V1,1.0,1.0,1.0
+scifact,1298,Jev V2,1.0,1.0,1.0
+scifact,1298,Jev V3,1.0,1.0,1.0
+scifact,1298,base (MaxSim@10),1.0,,
+scifact,525,first stage,1.0,1.0,1.0
+scifact,525,cross-encoder,1.0,1.0,1.0
+scifact,525,Jev V1,1.0,1.0,1.0
+scifact,525,Jev V2,1.0,1.0,1.0
+scifact,525,Jev V3,1.0,1.0,1.0
+scifact,525,base (MaxSim@10),1.0,,
+scifact,53,first stage,1.0,1.0,1.0
+scifact,53,cross-encoder,1.0,1.0,1.0
+scifact,53,Jev V1,1.0,1.0,1.0
+scifact,53,Jev V2,1.0,1.0,1.0
+scifact,53,Jev V3,1.0,1.0,1.0
+scifact,53,base (MaxSim@10),1.0,,
+scifact,48,first stage,0.38685280723454163,0.2,1.0
+scifact,48,cross-encoder,1.0,1.0,1.0
+scifact,48,Jev V1,1.0,1.0,1.0
+scifact,48,Jev V2,1.0,1.0,1.0
+scifact,48,Jev V3,1.0,1.0,1.0
+scifact,48,base (MaxSim@10),0.5,,
+scifact,784,first stage,0.6309297535714575,0.5,1.0
+scifact,784,cross-encoder,1.0,1.0,1.0
+scifact,784,Jev V1,1.0,1.0,1.0
+scifact,784,Jev V2,1.0,1.0,1.0
+scifact,784,Jev V3,1.0,1.0,1.0
+scifact,784,base (MaxSim@10),1.0,,
+scifact,907,first stage,1.0,1.0,1.0
+scifact,907,cross-encoder,1.0,1.0,1.0
+scifact,907,Jev V1,1.0,1.0,1.0
+scifact,907,Jev V2,1.0,1.0,1.0
+scifact,907,Jev V3,1.0,1.0,1.0
+scifact,907,base (MaxSim@10),1.0,,
+scifact,36,first stage,0.21840743681816419,0.16666666666666666,0.5
+scifact,36,cross-encoder,0.18457569677956817,0.1111111111111111,0.5
+scifact,36,Jev V1,0.17723928678404774,0.1,0.5
+scifact,36,Jev V2,0.0,0.0,0.0
+scifact,36,Jev V3,0.19342640361727081,0.125,0.5
+scifact,36,base (MaxSim@10),0.2640681225725909,,
+scifact,721,first stage,1.0,1.0,1.0
+scifact,721,cross-encoder,1.0,1.0,1.0
+scifact,721,Jev V1,1.0,1.0,1.0
+scifact,721,Jev V2,1.0,1.0,1.0
+scifact,721,Jev V3,1.0,1.0,1.0
+scifact,721,base (MaxSim@10),1.0,,
+scifact,1041,first stage,0.23719771276929622,0.2,0.5
+scifact,1041,cross-encoder,0.44130740935663865,0.25,1.0
+scifact,1041,Jev V1,0.8503449055347546,1.0,1.0
+scifact,1041,Jev V2,0.8315546295836225,1.0,1.0
+scifact,1041,Jev V3,0.6934264036172708,0.5,1.0
+scifact,1041,base (MaxSim@10),0.2184074368181641,,
+scifact,743,first stage,1.0,1.0,1.0
+scifact,743,cross-encoder,1.0,1.0,1.0
+scifact,743,Jev V1,1.0,1.0,1.0
+scifact,743,Jev V2,1.0,1.0,1.0
+scifact,743,Jev V3,1.0,1.0,1.0
+scifact,743,base (MaxSim@10),1.0,,
+scifact,879,first stage,1.0,1.0,1.0
+scifact,879,cross-encoder,1.0,1.0,1.0
+scifact,879,Jev V1,1.0,1.0,1.0
+scifact,879,Jev V2,1.0,1.0,1.0
+scifact,879,Jev V3,1.0,1.0,1.0
+scifact,879,base (MaxSim@10),1.0,,
+scifact,350,first stage,1.0,1.0,1.0
+scifact,350,cross-encoder,1.0,1.0,1.0
+scifact,350,Jev V1,1.0,1.0,1.0
+scifact,350,Jev V2,1.0,1.0,1.0
+scifact,350,Jev V3,1.0,1.0,1.0
+scifact,350,base (MaxSim@10),1.0,,
+scifact,1259,first stage,1.0,1.0,1.0
+scifact,1259,cross-encoder,1.0,1.0,1.0
+scifact,1259,Jev V1,1.0,1.0,1.0
+scifact,1259,Jev V2,1.0,1.0,1.0
+scifact,1259,Jev V3,1.0,1.0,1.0
+scifact,1259,base (MaxSim@10),1.0,,
+scifact,3,first stage,0.6309297535714575,0.5,1.0
+scifact,3,cross-encoder,0.5,0.3333333333333333,1.0
+scifact,3,Jev V1,1.0,1.0,1.0
+scifact,3,Jev V2,1.0,1.0,1.0
+scifact,3,Jev V3,0.43067655807339306,0.25,1.0
+scifact,3,base (MaxSim@10),0.3868528072345416,,
+scifact,213,first stage,0.31546487678572877,0.125,1.0
+scifact,213,cross-encoder,0.31546487678572877,0.125,1.0
+scifact,213,Jev V1,0.5,0.3333333333333333,1.0
+scifact,213,Jev V2,0.5,0.3333333333333333,1.0
+scifact,213,Jev V3,0.5,0.3333333333333333,1.0
+scifact,213,base (MaxSim@10),0.3333333333333333,,
+scifact,1150,first stage,1.0,1.0,1.0
+scifact,1150,cross-encoder,1.0,1.0,1.0
+scifact,1150,Jev V1,1.0,1.0,1.0
+scifact,1150,Jev V2,1.0,1.0,1.0
+scifact,1150,Jev V3,1.0,1.0,1.0
+scifact,1150,base (MaxSim@10),1.0,,
+scifact,163,first stage,0.6309297535714575,0.5,1.0
+scifact,163,cross-encoder,1.0,1.0,1.0
+scifact,163,Jev V1,0.6309297535714575,0.5,1.0
+scifact,163,Jev V2,0.6309297535714575,0.5,1.0
+scifact,163,Jev V3,0.6309297535714575,0.5,1.0
+scifact,163,base (MaxSim@10),1.0,,
+scifact,51,first stage,1.0,1.0,1.0
+scifact,51,cross-encoder,1.0,1.0,1.0
+scifact,51,Jev V1,1.0,1.0,1.0
+scifact,51,Jev V2,1.0,1.0,1.0
+scifact,51,Jev V3,1.0,1.0,1.0
+scifact,51,base (MaxSim@10),1.0,,
+scifact,1,first stage,0.0,0.0,0.0
+scifact,1,cross-encoder,0.0,0.0,0.0
+scifact,1,Jev V1,0.0,0.0,0.0
+scifact,1,Jev V2,0.0,0.0,0.0
+scifact,1,Jev V3,0.0,0.0,0.0
+scifact,1,base (MaxSim@10),0.0,,
+scifact,1202,first stage,1.0,1.0,1.0
+scifact,1202,cross-encoder,1.0,1.0,1.0
+scifact,1202,Jev V1,1.0,1.0,1.0
+scifact,1202,Jev V2,1.0,1.0,1.0
+scifact,1202,Jev V3,1.0,1.0,1.0
+scifact,1202,base (MaxSim@10),1.0,,
+scifact,362,first stage,1.0,1.0,1.0
+scifact,362,cross-encoder,1.0,1.0,1.0
+scifact,362,Jev V1,1.0,1.0,1.0
+scifact,362,Jev V2,1.0,1.0,1.0
+scifact,362,Jev V3,1.0,1.0,1.0
+scifact,362,base (MaxSim@10),0.6309297535714575,,
+scifact,219,first stage,1.0,1.0,1.0
+scifact,219,cross-encoder,1.0,1.0,1.0
+scifact,219,Jev V1,1.0,1.0,1.0
+scifact,219,Jev V2,1.0,1.0,1.0
+scifact,219,Jev V3,1.0,1.0,1.0
+scifact,219,base (MaxSim@10),1.0,,
+scifact,1221,first stage,1.0,1.0,1.0
+scifact,1221,cross-encoder,1.0,1.0,1.0
+scifact,1221,Jev V1,1.0,1.0,1.0
+scifact,1221,Jev V2,1.0,1.0,1.0
+scifact,1221,Jev V3,1.0,1.0,1.0
+scifact,1221,base (MaxSim@10),1.0,,
+scifact,837,first stage,1.0,1.0,1.0
+scifact,837,cross-encoder,1.0,1.0,1.0
+scifact,837,Jev V1,1.0,1.0,1.0
+scifact,837,Jev V2,1.0,1.0,1.0
+scifact,837,Jev V3,1.0,1.0,1.0
+scifact,837,base (MaxSim@10),1.0,,
+scifact,544,first stage,0.31546487678572877,0.125,1.0
+scifact,544,cross-encoder,0.0,0.0,0.0
+scifact,544,Jev V1,0.43067655807339306,0.25,1.0
+scifact,544,Jev V2,0.5,0.3333333333333333,1.0
+scifact,544,Jev V3,0.6309297535714575,0.5,1.0
+scifact,544,base (MaxSim@10),0.3562071871080222,,
+scifact,1187,first stage,0.6309297535714575,0.5,1.0
+scifact,1187,cross-encoder,1.0,1.0,1.0
+scifact,1187,Jev V1,1.0,1.0,1.0
+scifact,1187,Jev V2,1.0,1.0,1.0
+scifact,1187,Jev V3,1.0,1.0,1.0
+scifact,1187,base (MaxSim@10),0.6309297535714575,,
+scifact,718,first stage,1.0,1.0,1.0
+scifact,718,cross-encoder,1.0,1.0,1.0
+scifact,718,Jev V1,1.0,1.0,1.0
+scifact,718,Jev V2,1.0,1.0,1.0
+scifact,718,Jev V3,1.0,1.0,1.0
+scifact,718,base (MaxSim@10),1.0,,
+scifact,560,first stage,0.0,0.0,0.0
+scifact,560,cross-encoder,0.0,0.0,0.0
+scifact,560,Jev V1,0.0,0.0,0.0
+scifact,560,Jev V2,0.0,0.0,0.0
+scifact,560,Jev V3,0.0,0.0,0.0
+scifact,560,base (MaxSim@10),0.0,,
+scifact,936,first stage,1.0,1.0,1.0
+scifact,936,cross-encoder,1.0,1.0,1.0
+scifact,936,Jev V1,1.0,1.0,1.0
+scifact,936,Jev V2,1.0,1.0,1.0
+scifact,936,Jev V3,1.0,1.0,1.0
+scifact,936,base (MaxSim@10),1.0,,
+scifact,783,first stage,0.0,0.0,0.0
+scifact,783,cross-encoder,0.31546487678572877,0.125,1.0
+scifact,783,Jev V1,0.43067655807339306,0.25,1.0
+scifact,783,Jev V2,0.43067655807339306,0.25,1.0
+scifact,783,Jev V3,0.43067655807339306,0.25,1.0
+scifact,783,base (MaxSim@10),0.0,,
+scifact,5,first stage,1.0,1.0,1.0
+scifact,5,cross-encoder,1.0,1.0,1.0
+scifact,5,Jev V1,1.0,1.0,1.0
+scifact,5,Jev V2,1.0,1.0,1.0
+scifact,5,Jev V3,1.0,1.0,1.0
+scifact,5,base (MaxSim@10),1.0,,
+scifact,411,first stage,1.0,1.0,1.0
+scifact,411,cross-encoder,1.0,1.0,1.0
+scifact,411,Jev V1,1.0,1.0,1.0
+scifact,411,Jev V2,1.0,1.0,1.0
+scifact,411,Jev V3,1.0,1.0,1.0
+scifact,411,base (MaxSim@10),1.0,,
+scifact,727,first stage,0.0,0.0,0.0
+scifact,727,cross-encoder,0.38685280723454163,0.2,1.0
+scifact,727,Jev V1,0.3562071871080222,0.16666666666666666,1.0
+scifact,727,Jev V2,0.3562071871080222,0.16666666666666666,1.0
+scifact,727,Jev V3,0.38685280723454163,0.2,1.0
+scifact,727,base (MaxSim@10),0.0,,
+scifact,834,first stage,0.0,0.0,0.0
+scifact,834,cross-encoder,0.0,0.0,0.0
+scifact,834,Jev V1,0.0,0.0,0.0
+scifact,834,Jev V2,0.0,0.0,0.0
+scifact,834,Jev V3,0.0,0.0,0.0
+scifact,834,base (MaxSim@10),0.0,,
+scifact,702,first stage,0.5,0.3333333333333333,1.0
+scifact,702,cross-encoder,0.6309297535714575,0.5,1.0
+scifact,702,Jev V1,1.0,1.0,1.0
+scifact,702,Jev V2,1.0,1.0,1.0
+scifact,702,Jev V3,1.0,1.0,1.0
+scifact,702,base (MaxSim@10),0.3868528072345416,,
+scifact,644,first stage,0.3562071871080222,0.16666666666666666,1.0
+scifact,644,cross-encoder,1.0,1.0,1.0
+scifact,644,Jev V1,1.0,1.0,1.0
+scifact,644,Jev V2,1.0,1.0,1.0
+scifact,644,Jev V3,1.0,1.0,1.0
+scifact,644,base (MaxSim@10),1.0,,
+nfcorpus,PLAIN-227,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-227,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-227,Jev V1,0.06362078819895173,0.1,0.025
+nfcorpus,PLAIN-227,Jev V2,0.07839826897867534,0.16666666666666666,0.025
+nfcorpus,PLAIN-227,Jev V3,0.2200917662980802,1.0,0.025
+nfcorpus,PLAIN-227,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-91,first stage,0.4471231595646438,1.0,0.09375
+nfcorpus,PLAIN-91,cross-encoder,0.4263036477320642,1.0,0.078125
+nfcorpus,PLAIN-91,Jev V1,0.6555188597954097,1.0,0.125
+nfcorpus,PLAIN-91,Jev V2,0.6401099641846459,1.0,0.125
+nfcorpus,PLAIN-91,Jev V3,0.5531021948655234,1.0,0.09375
+nfcorpus,PLAIN-91,base (MaxSim@10),0.5099614748268871,,
+nfcorpus,PLAIN-2790,first stage,0.42520843362602384,1.0,0.05084745762711865
+nfcorpus,PLAIN-2790,cross-encoder,0.5541432109622959,1.0,0.06779661016949153
+nfcorpus,PLAIN-2790,Jev V1,0.5637884576902257,1.0,0.06779661016949153
+nfcorpus,PLAIN-2790,Jev V2,0.5637884576902257,1.0,0.06779661016949153
+nfcorpus,PLAIN-2790,Jev V3,0.5326208815196266,1.0,0.06779661016949153
+nfcorpus,PLAIN-2790,base (MaxSim@10),0.4690000933206749,,
+nfcorpus,PLAIN-2550,first stage,0.11690857395343693,0.125,0.08
+nfcorpus,PLAIN-2550,cross-encoder,0.10975131898723876,0.25,0.04
+nfcorpus,PLAIN-2550,Jev V1,0.19761464613743865,0.5,0.08
+nfcorpus,PLAIN-2550,Jev V2,0.16078277618017148,0.5,0.04
+nfcorpus,PLAIN-2550,Jev V3,0.036831869957267185,0.1,0.04
+nfcorpus,PLAIN-2550,base (MaxSim@10),0.1544826090890029,,
+nfcorpus,PLAIN-2301,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-2301,cross-encoder,0.06362078819895173,0.1,0.07692307692307693
+nfcorpus,PLAIN-2301,Jev V1,0.2200917662980802,1.0,0.07692307692307693
+nfcorpus,PLAIN-2301,Jev V2,0.2200917662980802,1.0,0.07692307692307693
+nfcorpus,PLAIN-2301,Jev V3,0.2200917662980802,1.0,0.07692307692307693
+nfcorpus,PLAIN-2301,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-2780,first stage,0.5422315034363078,1.0,0.2727272727272727
+nfcorpus,PLAIN-2780,cross-encoder,0.5509883867695238,1.0,0.3181818181818182
+nfcorpus,PLAIN-2780,Jev V1,0.5001150034956628,1.0,0.2727272727272727
+nfcorpus,PLAIN-2780,Jev V2,0.5681540795952743,1.0,0.3181818181818182
+nfcorpus,PLAIN-2780,Jev V3,0.5422315034363078,1.0,0.2727272727272727
+nfcorpus,PLAIN-2780,base (MaxSim@10),0.5295870861933465,,
+nfcorpus,PLAIN-291,first stage,0.1517621910780354,0.16666666666666666,0.15384615384615385
+nfcorpus,PLAIN-291,cross-encoder,0.35895421017163476,1.0,0.15384615384615385
+nfcorpus,PLAIN-291,Jev V1,0.25329540411053186,0.25,0.23076923076923078
+nfcorpus,PLAIN-291,Jev V2,0.25329540411053186,0.25,0.23076923076923078
+nfcorpus,PLAIN-291,Jev V3,0.46900009332067494,1.0,0.23076923076923078
+nfcorpus,PLAIN-291,base (MaxSim@10),0.2048342475185909,,
+nfcorpus,PLAIN-1568,first stage,0.6131471927654584,1.0,0.5
+nfcorpus,PLAIN-1568,cross-encoder,1.0,1.0,1.0
+nfcorpus,PLAIN-1568,Jev V1,1.0,1.0,1.0
+nfcorpus,PLAIN-1568,Jev V2,1.0,1.0,1.0
+nfcorpus,PLAIN-1568,Jev V3,1.0,1.0,1.0
+nfcorpus,PLAIN-1568,base (MaxSim@10),0.6131471927654584,,
+nfcorpus,PLAIN-259,first stage,0.35895421017163476,1.0,0.14285714285714285
+nfcorpus,PLAIN-259,cross-encoder,0.35895421017163476,1.0,0.14285714285714285
+nfcorpus,PLAIN-259,Jev V1,0.35895421017163476,1.0,0.14285714285714285
+nfcorpus,PLAIN-259,Jev V2,0.35895421017163476,1.0,0.14285714285714285
+nfcorpus,PLAIN-259,Jev V3,0.35895421017163476,1.0,0.14285714285714285
+nfcorpus,PLAIN-259,base (MaxSim@10),0.3301376494471203,,
+nfcorpus,PLAIN-817,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-817,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-817,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-817,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-817,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-817,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-1601,first stage,0.7788065869851875,1.0,0.0945945945945946
+nfcorpus,PLAIN-1601,cross-encoder,0.7167674835027339,1.0,0.0945945945945946
+nfcorpus,PLAIN-1601,Jev V1,0.7702043899253147,1.0,0.0945945945945946
+nfcorpus,PLAIN-1601,Jev V2,0.7885497208855957,1.0,0.0945945945945946
+nfcorpus,PLAIN-1601,Jev V3,0.627507133061656,1.0,0.06756756756756757
+nfcorpus,PLAIN-1601,base (MaxSim@10),0.791726719367984,,
+nfcorpus,PLAIN-2520,first stage,0.06362078819895173,0.1,0.0136986301369863
+nfcorpus,PLAIN-2520,cross-encoder,0.1334212105531954,0.3333333333333333,0.0273972602739726
+nfcorpus,PLAIN-2520,Jev V1,0.03312711172719452,0.1111111111111111,0.0136986301369863
+nfcorpus,PLAIN-2520,Jev V2,0.1061131829864573,0.14285714285714285,0.0273972602739726
+nfcorpus,PLAIN-2520,Jev V3,0.1574400653338155,1.0,0.0273972602739726
+nfcorpus,PLAIN-2520,base (MaxSim@10),0.0783982689786753,,
+nfcorpus,PLAIN-1752,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-1752,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-1752,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-1752,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-1752,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-1752,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-902,first stage,0.6366824387328317,1.0,0.5
+nfcorpus,PLAIN-902,cross-encoder,0.6366824387328317,1.0,0.5
+nfcorpus,PLAIN-902,Jev V1,0.6366824387328317,1.0,0.5
+nfcorpus,PLAIN-902,Jev V2,0.6366824387328317,1.0,0.5
+nfcorpus,PLAIN-902,Jev V3,0.6366824387328317,1.0,0.5
+nfcorpus,PLAIN-902,base (MaxSim@10),0.6366824387328317,,
+nfcorpus,PLAIN-3261,first stage,0.11591982604868999,0.2,0.07692307692307693
+nfcorpus,PLAIN-3261,cross-encoder,0.14982420171299152,0.3333333333333333,0.07692307692307693
+nfcorpus,PLAIN-3261,Jev V1,0.14982420171299152,0.3333333333333333,0.07692307692307693
+nfcorpus,PLAIN-3261,Jev V2,0.14982420171299152,0.3333333333333333,0.07692307692307693
+nfcorpus,PLAIN-3261,Jev V3,0.14982420171299152,0.3333333333333333,0.07692307692307693
+nfcorpus,PLAIN-3261,base (MaxSim@10),0.1498242017129915,,
+nfcorpus,PLAIN-1309,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-1309,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-1309,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-1309,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-1309,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-1309,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-123,first stage,0.06370866775185362,0.3333333333333333,0.0196078431372549
+nfcorpus,PLAIN-123,cross-encoder,0.06370866775185362,0.3333333333333333,0.0196078431372549
+nfcorpus,PLAIN-123,Jev V1,0.038356439954197026,0.1111111111111111,0.0196078431372549
+nfcorpus,PLAIN-123,Jev V2,0.038356439954197026,0.1111111111111111,0.0196078431372549
+nfcorpus,PLAIN-123,Jev V3,0.04538697066857469,0.16666666666666666,0.0196078431372549
+nfcorpus,PLAIN-123,base (MaxSim@10),0.0453869706685746,,
+nfcorpus,PLAIN-68,first stage,0.42503508006474094,1.0,0.03636363636363636
+nfcorpus,PLAIN-68,cross-encoder,0.6345711024749452,1.0,0.07272727272727272
+nfcorpus,PLAIN-68,Jev V1,0.6298088100815991,1.0,0.09090909090909091
+nfcorpus,PLAIN-68,Jev V2,0.6377943847486344,1.0,0.09090909090909091
+nfcorpus,PLAIN-68,Jev V3,0.42503508006474094,1.0,0.03636363636363636
+nfcorpus,PLAIN-68,base (MaxSim@10),0.4150816930657179,,
+nfcorpus,PLAIN-2030,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-2030,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-2030,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-2030,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-2030,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-2030,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-2332,first stage,0.2895229882348575,1.0,0.020618556701030927
+nfcorpus,PLAIN-2332,cross-encoder,0.2200917662980802,1.0,0.010309278350515464
+nfcorpus,PLAIN-2332,Jev V1,0.15457433957839828,0.2,0.020618556701030927
+nfcorpus,PLAIN-2332,Jev V2,0.1396181455537491,0.14285714285714285,0.020618556701030927
+nfcorpus,PLAIN-2332,Jev V3,0.18844415212771543,0.3333333333333333,0.020618556701030927
+nfcorpus,PLAIN-2332,base (MaxSim@10),0.2895229882348575,,
+nfcorpus,PLAIN-44,first stage,0.2244914439320251,0.5,0.034482758620689655
+nfcorpus,PLAIN-44,cross-encoder,0.28408410647017335,0.5,0.05172413793103448
+nfcorpus,PLAIN-44,Jev V1,0.37769850426540263,1.0,0.05172413793103448
+nfcorpus,PLAIN-44,Jev V2,0.37997525538826216,1.0,0.05172413793103448
+nfcorpus,PLAIN-44,Jev V3,0.37997525538826216,1.0,0.05172413793103448
+nfcorpus,PLAIN-44,base (MaxSim@10),0.3185433387592681,,
+nfcorpus,PLAIN-1847,first stage,0.13886244387355456,0.5,0.09090909090909091
+nfcorpus,PLAIN-1847,cross-encoder,0.13886244387355456,0.5,0.09090909090909091
+nfcorpus,PLAIN-1847,Jev V1,0.13886244387355456,0.5,0.09090909090909091
+nfcorpus,PLAIN-1847,Jev V2,0.13886244387355456,0.5,0.09090909090909091
+nfcorpus,PLAIN-1847,Jev V3,0.13886244387355456,0.5,0.09090909090909091
+nfcorpus,PLAIN-1847,base (MaxSim@10),0.1388624438735545,,
+nfcorpus,PLAIN-2620,first stage,0.1061131829864573,0.14285714285714285,0.03636363636363636
+nfcorpus,PLAIN-2620,cross-encoder,0.14476149411742875,0.3333333333333333,0.03636363636363636
+nfcorpus,PLAIN-2620,Jev V1,0.3098303188409889,1.0,0.05454545454545454
+nfcorpus,PLAIN-2620,Jev V2,0.3098303188409889,1.0,0.05454545454545454
+nfcorpus,PLAIN-2620,Jev V3,0.25480737726646885,1.0,0.03636363636363636
+nfcorpus,PLAIN-2620,base (MaxSim@10),0.1025583336639718,,
+nfcorpus,PLAIN-1929,first stage,0.2863459897524693,1.0,0.2
+nfcorpus,PLAIN-1929,cross-encoder,0.2200917662980802,1.0,0.1
+nfcorpus,PLAIN-1929,Jev V1,0.314880130667631,1.0,0.2
+nfcorpus,PLAIN-1929,Jev V2,0.314880130667631,1.0,0.2
+nfcorpus,PLAIN-1929,Jev V3,0.35895421017163476,1.0,0.2
+nfcorpus,PLAIN-1929,base (MaxSim@10),0.2895229882348575,,
+nfcorpus,PLAIN-2271,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-2271,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-2271,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-2271,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-2271,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-2271,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-913,first stage,0.8630152897016883,1.0,0.23529411764705882
+nfcorpus,PLAIN-913,cross-encoder,0.7849818707050383,1.0,0.20588235294117646
+nfcorpus,PLAIN-913,Jev V1,0.8701249883466594,1.0,0.23529411764705882
+nfcorpus,PLAIN-913,Jev V2,0.8669479898642711,1.0,0.23529411764705882
+nfcorpus,PLAIN-913,Jev V3,0.8630152897016883,1.0,0.23529411764705882
+nfcorpus,PLAIN-913,base (MaxSim@10),0.8263333286520084,,
+nfcorpus,PLAIN-1919,first stage,1.0,1.0,0.37037037037037035
+nfcorpus,PLAIN-1919,cross-encoder,0.9337457765456111,1.0,0.3333333333333333
+nfcorpus,PLAIN-1919,Jev V1,0.8603818544462509,1.0,0.2962962962962963
+nfcorpus,PLAIN-1919,Jev V2,0.7967610662472993,1.0,0.25925925925925924
+nfcorpus,PLAIN-1919,Jev V3,1.0,1.0,0.37037037037037035
+nfcorpus,PLAIN-1919,base (MaxSim@10),1.0,,
+nfcorpus,PLAIN-12,first stage,0.1222260944107594,1.0,0.03333333333333333
+nfcorpus,PLAIN-12,cross-encoder,0.08707562656251232,0.16666666666666666,0.03333333333333333
+nfcorpus,PLAIN-12,Jev V1,0.13971554021009175,0.25,0.06666666666666667
+nfcorpus,PLAIN-12,Jev V2,0.13312505529352386,0.2,0.06666666666666667
+nfcorpus,PLAIN-12,Jev V3,0.047283507740116394,0.2,0.03333333333333333
+nfcorpus,PLAIN-12,base (MaxSim@10),0.0472835077401163,,
+nfcorpus,PLAIN-551,first stage,0.6131471927654584,1.0,0.5
+nfcorpus,PLAIN-551,cross-encoder,0.3065735963827292,0.3333333333333333,0.5
+nfcorpus,PLAIN-551,Jev V1,0.6131471927654584,1.0,0.5
+nfcorpus,PLAIN-551,Jev V2,0.6131471927654584,1.0,0.5
+nfcorpus,PLAIN-551,Jev V3,0.6131471927654584,1.0,0.5
+nfcorpus,PLAIN-551,base (MaxSim@10),0.6131471927654584,,
+nfcorpus,PLAIN-2820,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-2820,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-2820,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-2820,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-2820,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-2820,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-441,first stage,0.7463470768586832,1.0,0.8
+nfcorpus,PLAIN-441,cross-encoder,0.9720511080339677,1.0,1.0
+nfcorpus,PLAIN-441,Jev V1,0.7796700873850805,1.0,1.0
+nfcorpus,PLAIN-441,Jev V2,0.653424060079178,1.0,0.8
+nfcorpus,PLAIN-441,Jev V3,0.6971533001755517,1.0,0.8
+nfcorpus,PLAIN-441,base (MaxSim@10),0.777747077360283,,
+nfcorpus,PLAIN-112,first stage,0.6787243400826974,1.0,0.08928571428571429
+nfcorpus,PLAIN-112,cross-encoder,0.7148867630751979,1.0,0.08928571428571429
+nfcorpus,PLAIN-112,Jev V1,0.7051299966120248,1.0,0.08928571428571429
+nfcorpus,PLAIN-112,Jev V2,0.7148867630751979,1.0,0.08928571428571429
+nfcorpus,PLAIN-112,Jev V3,0.7105736166072235,1.0,0.08928571428571429
+nfcorpus,PLAIN-112,base (MaxSim@10),0.6838971772692509,,
+nfcorpus,PLAIN-2,first stage,0.642069004131331,1.0,0.25
+nfcorpus,PLAIN-2,cross-encoder,0.8012914355534833,1.0,0.2916666666666667
+nfcorpus,PLAIN-2,Jev V1,0.7931392478350172,1.0,0.2916666666666667
+nfcorpus,PLAIN-2,Jev V2,0.788771264521093,1.0,0.2916666666666667
+nfcorpus,PLAIN-2,Jev V3,0.7031820513367106,1.0,0.25
+nfcorpus,PLAIN-2,base (MaxSim@10),0.6900990987969842,,
+nfcorpus,PLAIN-2950,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-2950,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-2950,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-2950,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-2950,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-2950,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-946,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-946,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-946,Jev V1,0.1100458831490401,0.3333333333333333,0.03225806451612903
+nfcorpus,PLAIN-946,Jev V2,0.1100458831490401,0.3333333333333333,0.03225806451612903
+nfcorpus,PLAIN-946,Jev V3,0.09478836436955079,0.25,0.03225806451612903
+nfcorpus,PLAIN-946,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-593,first stage,0.46927872602275644,1.0,0.3333333333333333
+nfcorpus,PLAIN-593,cross-encoder,0.2960819109658652,0.5,0.3333333333333333
+nfcorpus,PLAIN-593,Jev V1,0.46927872602275644,1.0,0.3333333333333333
+nfcorpus,PLAIN-593,Jev V2,0.46927872602275644,1.0,0.3333333333333333
+nfcorpus,PLAIN-593,Jev V3,0.46927872602275644,1.0,0.3333333333333333
+nfcorpus,PLAIN-593,base (MaxSim@10),0.4692787260227564,,
+nfcorpus,PLAIN-3014,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-3014,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-3014,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-3014,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-3014,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-3014,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-3472,first stage,0.13347537859706934,0.3333333333333333,0.058823529411764705
+nfcorpus,PLAIN-3472,cross-encoder,0.13347537859706934,0.3333333333333333,0.058823529411764705
+nfcorpus,PLAIN-3472,Jev V1,0.13347537859706934,0.3333333333333333,0.058823529411764705
+nfcorpus,PLAIN-3472,Jev V2,0.2669507571941387,1.0,0.058823529411764705
+nfcorpus,PLAIN-3472,Jev V3,0.16842717545221192,0.5,0.058823529411764705
+nfcorpus,PLAIN-3472,base (MaxSim@10),0.103270649813939,,
+nfcorpus,PLAIN-1409,first stage,0.5252098581198154,0.5,0.023715415019762844
+nfcorpus,PLAIN-1409,cross-encoder,0.4354747455750673,1.0,0.015810276679841896
+nfcorpus,PLAIN-1409,Jev V1,0.7164850636933813,1.0,0.02766798418972332
+nfcorpus,PLAIN-1409,Jev V2,0.5734923014668308,0.5,0.023715415019762844
+nfcorpus,PLAIN-1409,Jev V3,0.4608129830623534,0.5,0.019762845849802372
+nfcorpus,PLAIN-1409,base (MaxSim@10),0.5113553108118987,,
+nfcorpus,PLAIN-2860,first stage,1.0,1.0,1.0
+nfcorpus,PLAIN-2860,cross-encoder,1.0,1.0,1.0
+nfcorpus,PLAIN-2860,Jev V1,1.0,1.0,1.0
+nfcorpus,PLAIN-2860,Jev V2,1.0,1.0,1.0
+nfcorpus,PLAIN-2860,Jev V3,1.0,1.0,1.0
+nfcorpus,PLAIN-2860,base (MaxSim@10),1.0,,
+nfcorpus,PLAIN-1837,first stage,1.0,1.0,0.05102040816326531
+nfcorpus,PLAIN-1837,cross-encoder,1.0,1.0,0.05102040816326531
+nfcorpus,PLAIN-1837,Jev V1,0.92663607790064,1.0,0.04591836734693878
+nfcorpus,PLAIN-1837,Jev V2,0.8415908474314977,1.0,0.04081632653061224
+nfcorpus,PLAIN-1837,Jev V3,1.0,1.0,0.05102040816326531
+nfcorpus,PLAIN-1837,base (MaxSim@10),1.0,,
+nfcorpus,PLAIN-1473,first stage,1.0,1.0,1.0
+nfcorpus,PLAIN-1473,cross-encoder,1.0,1.0,1.0
+nfcorpus,PLAIN-1473,Jev V1,1.0,1.0,1.0
+nfcorpus,PLAIN-1473,Jev V2,1.0,1.0,1.0
+nfcorpus,PLAIN-1473,Jev V3,1.0,1.0,1.0
+nfcorpus,PLAIN-1473,base (MaxSim@10),1.0,,
+nfcorpus,PLAIN-2430,first stage,0.536842816016258,1.0,0.10869565217391304
+nfcorpus,PLAIN-2430,cross-encoder,0.5339375991473453,1.0,0.10869565217391304
+nfcorpus,PLAIN-2430,Jev V1,0.5339375991473453,1.0,0.10869565217391304
+nfcorpus,PLAIN-2430,Jev V2,0.5339375991473453,1.0,0.10869565217391304
+nfcorpus,PLAIN-2430,Jev V3,0.536842816016258,1.0,0.10869565217391304
+nfcorpus,PLAIN-2430,base (MaxSim@10),0.5339375991473453,,
+nfcorpus,PLAIN-2019,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-2019,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-2019,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-2019,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-2019,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-2019,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-23,first stage,0.2902597849695646,0.5,0.044444444444444446
+nfcorpus,PLAIN-23,cross-encoder,0.37073340571389574,0.5,0.044444444444444446
+nfcorpus,PLAIN-23,Jev V1,0.5037157042890635,1.0,0.044444444444444446
+nfcorpus,PLAIN-23,Jev V2,0.4884581855095742,1.0,0.044444444444444446
+nfcorpus,PLAIN-23,Jev V3,0.5037157042890635,1.0,0.044444444444444446
+nfcorpus,PLAIN-23,base (MaxSim@10),0.37682380311934,,
+nfcorpus,PLAIN-1028,first stage,0.0,0.0,0.0
+nfcorpus,PLAIN-1028,cross-encoder,0.0,0.0,0.0
+nfcorpus,PLAIN-1028,Jev V1,0.0,0.0,0.0
+nfcorpus,PLAIN-1028,Jev V2,0.0,0.0,0.0
+nfcorpus,PLAIN-1028,Jev V3,0.0,0.0,0.0
+nfcorpus,PLAIN-1028,base (MaxSim@10),0.0,,
+nfcorpus,PLAIN-1857,first stage,0.5637884576902257,1.0,0.12121212121212122
+nfcorpus,PLAIN-1857,cross-encoder,0.4936790360674166,1.0,0.12121212121212122
+nfcorpus,PLAIN-1857,Jev V1,0.5388856921828066,1.0,0.12121212121212122
+nfcorpus,PLAIN-1857,Jev V2,0.5541432109622959,1.0,0.12121212121212122
+nfcorpus,PLAIN-1857,Jev V3,0.5637884576902257,1.0,0.12121212121212122
+nfcorpus,PLAIN-1857,base (MaxSim@10),0.5637884576902257,,
+nfcorpus,PLAIN-2177,first stage,0.510069131458292,1.0,0.16666666666666666
+nfcorpus,PLAIN-2177,cross-encoder,0.35388057316851634,0.5,0.16666666666666666
+nfcorpus,PLAIN-2177,Jev V1,0.469736890055382,0.5,0.20833333333333334
+nfcorpus,PLAIN-2177,Jev V2,0.42883980903376645,0.5,0.16666666666666666
+nfcorpus,PLAIN-2177,Jev V3,0.5384313152574522,1.0,0.16666666666666666
+nfcorpus,PLAIN-2177,base (MaxSim@10),0.3850481493391154,,
+nfcorpus,PLAIN-1805,first stage,0.9337457765456111,1.0,0.07758620689655173
+nfcorpus,PLAIN-1805,cross-encoder,1.0,1.0,0.08620689655172414
+nfcorpus,PLAIN-1805,Jev V1,1.0,1.0,0.08620689655172414
+nfcorpus,PLAIN-1805,Jev V2,1.0,1.0,0.08620689655172414
+nfcorpus,PLAIN-1805,Jev V3,1.0,1.0,0.08620689655172414
+nfcorpus,PLAIN-1805,base (MaxSim@10),0.9337457765456112,,
+nfcorpus,PLAIN-1667,first stage,0.7000949683025057,1.0,0.0440251572327044
+nfcorpus,PLAIN-1667,cross-encoder,0.88995411685096,1.0,0.05660377358490566
+nfcorpus,PLAIN-1667,Jev V1,0.6698623505528799,0.5,0.050314465408805034
+nfcorpus,PLAIN-1667,Jev V2,0.685119869332369,0.5,0.050314465408805034
+nfcorpus,PLAIN-1667,Jev V3,0.5111707781750247,0.3333333333333333,0.03773584905660377
+nfcorpus,PLAIN-1667,base (MaxSim@10),0.7000949683025057,,
+arguana,test-health-dhghwapgd-pro05a,first stage,0.0,0.0,0.0
+arguana,test-health-dhghwapgd-pro05a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-health-dhghwapgd-pro05a,Jev V1,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-health-dhghwapgd-pro05a,Jev V2,0.0,0.0,0.0
+arguana,test-health-dhghwapgd-pro05a,Jev V3,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-health-dhghwapgd-pro05a,base (MaxSim@10),0.0,,
+arguana,test-environment-opecewiahw-pro01a,first stage,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-environment-opecewiahw-pro01a,cross-encoder,1.0,1.0,1.0
+arguana,test-environment-opecewiahw-pro01a,Jev V1,1.0,1.0,1.0
+arguana,test-environment-opecewiahw-pro01a,Jev V2,1.0,1.0,1.0
+arguana,test-environment-opecewiahw-pro01a,Jev V3,1.0,1.0,1.0
+arguana,test-environment-opecewiahw-pro01a,base (MaxSim@10),0.3562071871080222,,
+arguana,test-culture-thbcsbptwhht-pro02a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-culture-thbcsbptwhht-pro02a,cross-encoder,1.0,1.0,1.0
+arguana,test-culture-thbcsbptwhht-pro02a,Jev V1,1.0,1.0,1.0
+arguana,test-culture-thbcsbptwhht-pro02a,Jev V2,1.0,1.0,1.0
+arguana,test-culture-thbcsbptwhht-pro02a,Jev V3,1.0,1.0,1.0
+arguana,test-culture-thbcsbptwhht-pro02a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-culture-tlhrilsfhwr-con02a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-culture-tlhrilsfhwr-con02a,cross-encoder,0.5,0.3333333333333333,1.0
+arguana,test-culture-tlhrilsfhwr-con02a,Jev V1,0.38685280723454163,0.2,1.0
+arguana,test-culture-tlhrilsfhwr-con02a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-culture-tlhrilsfhwr-con02a,Jev V3,1.0,1.0,1.0
+arguana,test-culture-tlhrilsfhwr-con02a,base (MaxSim@10),1.0,,
+arguana,test-politics-pgsimhwoia-con01a,first stage,1.0,1.0,1.0
+arguana,test-politics-pgsimhwoia-con01a,cross-encoder,1.0,1.0,1.0
+arguana,test-politics-pgsimhwoia-con01a,Jev V1,1.0,1.0,1.0
+arguana,test-politics-pgsimhwoia-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-politics-pgsimhwoia-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-politics-pgsimhwoia-con01a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-digital-freedoms-phwnaccpdt-con02a,first stage,0.3010299956639812,0.1111111111111111,1.0
+arguana,test-digital-freedoms-phwnaccpdt-con02a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-digital-freedoms-phwnaccpdt-con02a,Jev V1,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-digital-freedoms-phwnaccpdt-con02a,Jev V2,0.5,0.3333333333333333,1.0
+arguana,test-digital-freedoms-phwnaccpdt-con02a,Jev V3,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-digital-freedoms-phwnaccpdt-con02a,base (MaxSim@10),0.3154648767857287,,
+arguana,test-sport-aastshsrqsar-pro01a,first stage,0.38685280723454163,0.2,1.0
+arguana,test-sport-aastshsrqsar-pro01a,cross-encoder,1.0,1.0,1.0
+arguana,test-sport-aastshsrqsar-pro01a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-sport-aastshsrqsar-pro01a,Jev V2,0.43067655807339306,0.25,1.0
+arguana,test-sport-aastshsrqsar-pro01a,Jev V3,1.0,1.0,1.0
+arguana,test-sport-aastshsrqsar-pro01a,base (MaxSim@10),0.3562071871080222,,
+arguana,test-law-ilppppghb-pro01a,first stage,1.0,1.0,1.0
+arguana,test-law-ilppppghb-pro01a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-law-ilppppghb-pro01a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-law-ilppppghb-pro01a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-law-ilppppghb-pro01a,Jev V3,1.0,1.0,1.0
+arguana,test-law-ilppppghb-pro01a,base (MaxSim@10),1.0,,
+arguana,test-health-dhghhbampt-pro01a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-health-dhghhbampt-pro01a,cross-encoder,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-health-dhghhbampt-pro01a,Jev V1,0.31546487678572877,0.125,1.0
+arguana,test-health-dhghhbampt-pro01a,Jev V2,0.38685280723454163,0.2,1.0
+arguana,test-health-dhghhbampt-pro01a,Jev V3,0.5,0.3333333333333333,1.0
+arguana,test-health-dhghhbampt-pro01a,base (MaxSim@10),1.0,,
+arguana,test-international-gmehwasr-con03a,first stage,0.0,0.0,0.0
+arguana,test-international-gmehwasr-con03a,cross-encoder,1.0,1.0,1.0
+arguana,test-international-gmehwasr-con03a,Jev V1,0.38685280723454163,0.2,1.0
+arguana,test-international-gmehwasr-con03a,Jev V2,1.0,1.0,1.0
+arguana,test-international-gmehwasr-con03a,Jev V3,0.5,0.3333333333333333,1.0
+arguana,test-international-gmehwasr-con03a,base (MaxSim@10),0.0,,
+arguana,test-philosophy-ippelhbcp-con02a,first stage,0.43067655807339306,0.25,1.0
+arguana,test-philosophy-ippelhbcp-con02a,cross-encoder,1.0,1.0,1.0
+arguana,test-philosophy-ippelhbcp-con02a,Jev V1,1.0,1.0,1.0
+arguana,test-philosophy-ippelhbcp-con02a,Jev V2,1.0,1.0,1.0
+arguana,test-philosophy-ippelhbcp-con02a,Jev V3,1.0,1.0,1.0
+arguana,test-philosophy-ippelhbcp-con02a,base (MaxSim@10),0.5,,
+arguana,test-politics-glghssi-con03a,first stage,1.0,1.0,1.0
+arguana,test-politics-glghssi-con03a,cross-encoder,1.0,1.0,1.0
+arguana,test-politics-glghssi-con03a,Jev V1,1.0,1.0,1.0
+arguana,test-politics-glghssi-con03a,Jev V2,1.0,1.0,1.0
+arguana,test-politics-glghssi-con03a,Jev V3,1.0,1.0,1.0
+arguana,test-politics-glghssi-con03a,base (MaxSim@10),1.0,,
+arguana,test-law-sdiflhrdffe-con03a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-law-sdiflhrdffe-con03a,cross-encoder,1.0,1.0,1.0
+arguana,test-law-sdiflhrdffe-con03a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-law-sdiflhrdffe-con03a,Jev V2,0.5,0.3333333333333333,1.0
+arguana,test-law-sdiflhrdffe-con03a,Jev V3,0.6309297535714575,0.5,1.0
+arguana,test-law-sdiflhrdffe-con03a,base (MaxSim@10),0.3868528072345416,,
+arguana,test-international-gpsmhbsosb-con03a,first stage,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-international-gpsmhbsosb-con03a,cross-encoder,0.31546487678572877,0.125,1.0
+arguana,test-international-gpsmhbsosb-con03a,Jev V1,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-international-gpsmhbsosb-con03a,Jev V2,0.38685280723454163,0.2,1.0
+arguana,test-international-gpsmhbsosb-con03a,Jev V3,0.0,0.0,0.0
+arguana,test-international-gpsmhbsosb-con03a,base (MaxSim@10),0.3562071871080222,,
+arguana,test-politics-gvhwhnerse-pro04a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-politics-gvhwhnerse-pro04a,cross-encoder,0.31546487678572877,0.125,1.0
+arguana,test-politics-gvhwhnerse-pro04a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-politics-gvhwhnerse-pro04a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-politics-gvhwhnerse-pro04a,Jev V3,1.0,1.0,1.0
+arguana,test-politics-gvhwhnerse-pro04a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-international-segiahbarr-con01a,first stage,1.0,1.0,1.0
+arguana,test-international-segiahbarr-con01a,cross-encoder,1.0,1.0,1.0
+arguana,test-international-segiahbarr-con01a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-international-segiahbarr-con01a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-international-segiahbarr-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-international-segiahbarr-con01a,base (MaxSim@10),1.0,,
+arguana,test-health-ppelfhwbpba-pro01a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-health-ppelfhwbpba-pro01a,cross-encoder,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-health-ppelfhwbpba-pro01a,Jev V1,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-health-ppelfhwbpba-pro01a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-health-ppelfhwbpba-pro01a,Jev V3,0.5,0.3333333333333333,1.0
+arguana,test-health-ppelfhwbpba-pro01a,base (MaxSim@10),0.430676558073393,,
+arguana,test-environment-ehwsnwu-con01a,first stage,0.2890648263178879,0.1,1.0
+arguana,test-environment-ehwsnwu-con01a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-environment-ehwsnwu-con01a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-environment-ehwsnwu-con01a,Jev V2,0.0,0.0,0.0
+arguana,test-environment-ehwsnwu-con01a,Jev V3,0.0,0.0,0.0
+arguana,test-environment-ehwsnwu-con01a,base (MaxSim@10),0.3154648767857287,,
+arguana,test-education-udfakusma-con01a,first stage,1.0,1.0,1.0
+arguana,test-education-udfakusma-con01a,cross-encoder,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-education-udfakusma-con01a,Jev V1,1.0,1.0,1.0
+arguana,test-education-udfakusma-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-education-udfakusma-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-education-udfakusma-con01a,base (MaxSim@10),1.0,,
+arguana,test-politics-dhbanhrnw-con02a,first stage,0.0,0.0,0.0
+arguana,test-politics-dhbanhrnw-con02a,cross-encoder,0.0,0.0,0.0
+arguana,test-politics-dhbanhrnw-con02a,Jev V1,0.0,0.0,0.0
+arguana,test-politics-dhbanhrnw-con02a,Jev V2,0.0,0.0,0.0
+arguana,test-politics-dhbanhrnw-con02a,Jev V3,0.0,0.0,0.0
+arguana,test-politics-dhbanhrnw-con02a,base (MaxSim@10),0.0,,
+arguana,test-environment-aiahwagit-con02a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-environment-aiahwagit-con02a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-environment-aiahwagit-con02a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-environment-aiahwagit-con02a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-environment-aiahwagit-con02a,Jev V3,1.0,1.0,1.0
+arguana,test-environment-aiahwagit-con02a,base (MaxSim@10),1.0,,
+arguana,test-law-rmelhrilhbiw-con04a,first stage,1.0,1.0,1.0
+arguana,test-law-rmelhrilhbiw-con04a,cross-encoder,1.0,1.0,1.0
+arguana,test-law-rmelhrilhbiw-con04a,Jev V1,1.0,1.0,1.0
+arguana,test-law-rmelhrilhbiw-con04a,Jev V2,1.0,1.0,1.0
+arguana,test-law-rmelhrilhbiw-con04a,Jev V3,1.0,1.0,1.0
+arguana,test-law-rmelhrilhbiw-con04a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-culture-mthbah-con02a,first stage,0.43067655807339306,0.25,1.0
+arguana,test-culture-mthbah-con02a,cross-encoder,1.0,1.0,1.0
+arguana,test-culture-mthbah-con02a,Jev V1,1.0,1.0,1.0
+arguana,test-culture-mthbah-con02a,Jev V2,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-culture-mthbah-con02a,Jev V3,1.0,1.0,1.0
+arguana,test-culture-mthbah-con02a,base (MaxSim@10),0.3333333333333333,,
+arguana,test-education-pteuhwfphe-con01a,first stage,0.2890648263178879,0.1,1.0
+arguana,test-education-pteuhwfphe-con01a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-education-pteuhwfphe-con01a,Jev V1,1.0,1.0,1.0
+arguana,test-education-pteuhwfphe-con01a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-education-pteuhwfphe-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-education-pteuhwfphe-con01a,base (MaxSim@10),0.3333333333333333,,
+arguana,test-education-pshhghwpba0-con01a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-education-pshhghwpba0-con01a,cross-encoder,1.0,1.0,1.0
+arguana,test-education-pshhghwpba0-con01a,Jev V1,0.43067655807339306,0.25,1.0
+arguana,test-education-pshhghwpba0-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-education-pshhghwpba0-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-education-pshhghwpba0-con01a,base (MaxSim@10),1.0,,
+arguana,test-international-gmehwasr-pro03a,first stage,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-international-gmehwasr-pro03a,cross-encoder,1.0,1.0,1.0
+arguana,test-international-gmehwasr-pro03a,Jev V1,0.5,0.3333333333333333,1.0
+arguana,test-international-gmehwasr-pro03a,Jev V2,1.0,1.0,1.0
+arguana,test-international-gmehwasr-pro03a,Jev V3,1.0,1.0,1.0
+arguana,test-international-gmehwasr-pro03a,base (MaxSim@10),0.430676558073393,,
+arguana,test-education-ufsdfkhbwu-con03a,first stage,0.0,0.0,0.0
+arguana,test-education-ufsdfkhbwu-con03a,cross-encoder,0.0,0.0,0.0
+arguana,test-education-ufsdfkhbwu-con03a,Jev V1,0.0,0.0,0.0
+arguana,test-education-ufsdfkhbwu-con03a,Jev V2,0.0,0.0,0.0
+arguana,test-education-ufsdfkhbwu-con03a,Jev V3,0.0,0.0,0.0
+arguana,test-education-ufsdfkhbwu-con03a,base (MaxSim@10),0.0,,
+arguana,test-environment-assgbatj-pro02a,first stage,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-environment-assgbatj-pro02a,cross-encoder,0.5,0.3333333333333333,1.0
+arguana,test-environment-assgbatj-pro02a,Jev V1,0.38685280723454163,0.2,1.0
+arguana,test-environment-assgbatj-pro02a,Jev V2,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-environment-assgbatj-pro02a,Jev V3,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-environment-assgbatj-pro02a,base (MaxSim@10),0.3562071871080222,,
+arguana,test-economy-epiasghbf-pro03a,first stage,0.0,0.0,0.0
+arguana,test-economy-epiasghbf-pro03a,cross-encoder,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-economy-epiasghbf-pro03a,Jev V1,0.5,0.3333333333333333,1.0
+arguana,test-economy-epiasghbf-pro03a,Jev V2,0.2890648263178879,0.1,1.0
+arguana,test-economy-epiasghbf-pro03a,Jev V3,0.0,0.0,0.0
+arguana,test-economy-epiasghbf-pro03a,base (MaxSim@10),0.0,,
+arguana,test-religion-frghbbgi-con03a,first stage,1.0,1.0,1.0
+arguana,test-religion-frghbbgi-con03a,cross-encoder,0.5,0.3333333333333333,1.0
+arguana,test-religion-frghbbgi-con03a,Jev V1,1.0,1.0,1.0
+arguana,test-religion-frghbbgi-con03a,Jev V2,1.0,1.0,1.0
+arguana,test-religion-frghbbgi-con03a,Jev V3,1.0,1.0,1.0
+arguana,test-religion-frghbbgi-con03a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-free-speech-debate-fsaphgiap-con01a,first stage,1.0,1.0,1.0
+arguana,test-free-speech-debate-fsaphgiap-con01a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-free-speech-debate-fsaphgiap-con01a,Jev V1,0.38685280723454163,0.2,1.0
+arguana,test-free-speech-debate-fsaphgiap-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-free-speech-debate-fsaphgiap-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-free-speech-debate-fsaphgiap-con01a,base (MaxSim@10),1.0,,
+arguana,test-health-hdond-pro02a,first stage,0.38685280723454163,0.2,1.0
+arguana,test-health-hdond-pro02a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-health-hdond-pro02a,Jev V1,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-health-hdond-pro02a,Jev V2,0.38685280723454163,0.2,1.0
+arguana,test-health-hdond-pro02a,Jev V3,0.6309297535714575,0.5,1.0
+arguana,test-health-hdond-pro02a,base (MaxSim@10),1.0,,
+arguana,test-environment-aeghhgwpe-pro04a,first stage,1.0,1.0,1.0
+arguana,test-environment-aeghhgwpe-pro04a,cross-encoder,1.0,1.0,1.0
+arguana,test-environment-aeghhgwpe-pro04a,Jev V1,1.0,1.0,1.0
+arguana,test-environment-aeghhgwpe-pro04a,Jev V2,1.0,1.0,1.0
+arguana,test-environment-aeghhgwpe-pro04a,Jev V3,1.0,1.0,1.0
+arguana,test-environment-aeghhgwpe-pro04a,base (MaxSim@10),1.0,,
+arguana,test-religion-msgfhwbamec-con01a,first stage,0.3010299956639812,0.1111111111111111,1.0
+arguana,test-religion-msgfhwbamec-con01a,cross-encoder,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-religion-msgfhwbamec-con01a,Jev V1,0.5,0.3333333333333333,1.0
+arguana,test-religion-msgfhwbamec-con01a,Jev V2,0.43067655807339306,0.25,1.0
+arguana,test-religion-msgfhwbamec-con01a,Jev V3,0.43067655807339306,0.25,1.0
+arguana,test-religion-msgfhwbamec-con01a,base (MaxSim@10),0.3154648767857287,,
+arguana,test-international-ghbunhf-pro02a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-international-ghbunhf-pro02a,cross-encoder,1.0,1.0,1.0
+arguana,test-international-ghbunhf-pro02a,Jev V1,1.0,1.0,1.0
+arguana,test-international-ghbunhf-pro02a,Jev V2,1.0,1.0,1.0
+arguana,test-international-ghbunhf-pro02a,Jev V3,1.0,1.0,1.0
+arguana,test-international-ghbunhf-pro02a,base (MaxSim@10),0.5,,
+arguana,test-economy-epiasghbf-con01a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-economy-epiasghbf-con01a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-economy-epiasghbf-con01a,Jev V1,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-economy-epiasghbf-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-economy-epiasghbf-con01a,Jev V3,0.5,0.3333333333333333,1.0
+arguana,test-economy-epiasghbf-con01a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-science-dssghsdmd-con01a,first stage,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-science-dssghsdmd-con01a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-science-dssghsdmd-con01a,Jev V1,0.5,0.3333333333333333,1.0
+arguana,test-science-dssghsdmd-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-science-dssghsdmd-con01a,Jev V3,0.6309297535714575,0.5,1.0
+arguana,test-science-dssghsdmd-con01a,base (MaxSim@10),0.3562071871080222,,
+arguana,test-education-pstrgsehwt-pro02a,first stage,1.0,1.0,1.0
+arguana,test-education-pstrgsehwt-pro02a,cross-encoder,1.0,1.0,1.0
+arguana,test-education-pstrgsehwt-pro02a,Jev V1,0.38685280723454163,0.2,1.0
+arguana,test-education-pstrgsehwt-pro02a,Jev V2,0.31546487678572877,0.125,1.0
+arguana,test-education-pstrgsehwt-pro02a,Jev V3,0.6309297535714575,0.5,1.0
+arguana,test-education-pstrgsehwt-pro02a,base (MaxSim@10),1.0,,
+arguana,test-international-eghrhbeusli-pro04a,first stage,1.0,1.0,1.0
+arguana,test-international-eghrhbeusli-pro04a,cross-encoder,1.0,1.0,1.0
+arguana,test-international-eghrhbeusli-pro04a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-international-eghrhbeusli-pro04a,Jev V2,1.0,1.0,1.0
+arguana,test-international-eghrhbeusli-pro04a,Jev V3,1.0,1.0,1.0
+arguana,test-international-eghrhbeusli-pro04a,base (MaxSim@10),0.5,,
+arguana,test-digital-freedoms-aihwbasmn-con04a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-digital-freedoms-aihwbasmn-con04a,cross-encoder,1.0,1.0,1.0
+arguana,test-digital-freedoms-aihwbasmn-con04a,Jev V1,1.0,1.0,1.0
+arguana,test-digital-freedoms-aihwbasmn-con04a,Jev V2,0.6309297535714575,0.5,1.0
+arguana,test-digital-freedoms-aihwbasmn-con04a,Jev V3,1.0,1.0,1.0
+arguana,test-digital-freedoms-aihwbasmn-con04a,base (MaxSim@10),0.3868528072345416,,
+arguana,test-law-tlcplghwfne-pro03a,first stage,1.0,1.0,1.0
+arguana,test-law-tlcplghwfne-pro03a,cross-encoder,1.0,1.0,1.0
+arguana,test-law-tlcplghwfne-pro03a,Jev V1,1.0,1.0,1.0
+arguana,test-law-tlcplghwfne-pro03a,Jev V2,1.0,1.0,1.0
+arguana,test-law-tlcplghwfne-pro03a,Jev V3,1.0,1.0,1.0
+arguana,test-law-tlcplghwfne-pro03a,base (MaxSim@10),1.0,,
+arguana,test-international-emephsate-con01a,first stage,0.38685280723454163,0.2,1.0
+arguana,test-international-emephsate-con01a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-international-emephsate-con01a,Jev V1,0.5,0.3333333333333333,1.0
+arguana,test-international-emephsate-con01a,Jev V2,0.5,0.3333333333333333,1.0
+arguana,test-international-emephsate-con01a,Jev V3,0.43067655807339306,0.25,1.0
+arguana,test-international-emephsate-con01a,base (MaxSim@10),0.430676558073393,,
+arguana,test-politics-oglilpdwhsn-con04a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-politics-oglilpdwhsn-con04a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-politics-oglilpdwhsn-con04a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-politics-oglilpdwhsn-con04a,Jev V2,1.0,1.0,1.0
+arguana,test-politics-oglilpdwhsn-con04a,Jev V3,0.6309297535714575,0.5,1.0
+arguana,test-politics-oglilpdwhsn-con04a,base (MaxSim@10),0.5,,
+arguana,test-education-pstrgsehwt-pro03a,first stage,0.6309297535714575,0.5,1.0
+arguana,test-education-pstrgsehwt-pro03a,cross-encoder,1.0,1.0,1.0
+arguana,test-education-pstrgsehwt-pro03a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-education-pstrgsehwt-pro03a,Jev V2,1.0,1.0,1.0
+arguana,test-education-pstrgsehwt-pro03a,Jev V3,1.0,1.0,1.0
+arguana,test-education-pstrgsehwt-pro03a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-environment-assgbatj-pro04a,first stage,0.3562071871080222,0.16666666666666666,1.0
+arguana,test-environment-assgbatj-pro04a,cross-encoder,0.38685280723454163,0.2,1.0
+arguana,test-environment-assgbatj-pro04a,Jev V1,0.0,0.0,0.0
+arguana,test-environment-assgbatj-pro04a,Jev V2,0.0,0.0,0.0
+arguana,test-environment-assgbatj-pro04a,Jev V3,0.0,0.0,0.0
+arguana,test-environment-assgbatj-pro04a,base (MaxSim@10),0.3333333333333333,,
+arguana,test-international-gpdwhwcusa-con01a,first stage,0.43067655807339306,0.25,1.0
+arguana,test-international-gpdwhwcusa-con01a,cross-encoder,0.43067655807339306,0.25,1.0
+arguana,test-international-gpdwhwcusa-con01a,Jev V1,1.0,1.0,1.0
+arguana,test-international-gpdwhwcusa-con01a,Jev V2,0.5,0.3333333333333333,1.0
+arguana,test-international-gpdwhwcusa-con01a,Jev V3,1.0,1.0,1.0
+arguana,test-international-gpdwhwcusa-con01a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-law-cplglghwbhwd-pro03a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-law-cplglghwbhwd-pro03a,cross-encoder,0.5,0.3333333333333333,1.0
+arguana,test-law-cplglghwbhwd-pro03a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-law-cplglghwbhwd-pro03a,Jev V2,1.0,1.0,1.0
+arguana,test-law-cplglghwbhwd-pro03a,Jev V3,1.0,1.0,1.0
+arguana,test-law-cplglghwbhwd-pro03a,base (MaxSim@10),0.430676558073393,,
+arguana,test-politics-oeplhbuwhmi-pro03a,first stage,0.2890648263178879,0.1,1.0
+arguana,test-politics-oeplhbuwhmi-pro03a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-politics-oeplhbuwhmi-pro03a,Jev V1,1.0,1.0,1.0
+arguana,test-politics-oeplhbuwhmi-pro03a,Jev V2,1.0,1.0,1.0
+arguana,test-politics-oeplhbuwhmi-pro03a,Jev V3,1.0,1.0,1.0
+arguana,test-politics-oeplhbuwhmi-pro03a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-law-tlcplghwfne-con01a,first stage,0.5,0.3333333333333333,1.0
+arguana,test-law-tlcplghwfne-con01a,cross-encoder,0.6309297535714575,0.5,1.0
+arguana,test-law-tlcplghwfne-con01a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-law-tlcplghwfne-con01a,Jev V2,1.0,1.0,1.0
+arguana,test-law-tlcplghwfne-con01a,Jev V3,0.5,0.3333333333333333,1.0
+arguana,test-law-tlcplghwfne-con01a,base (MaxSim@10),0.6309297535714575,,
+arguana,test-philosophy-eppphwlrtjs-pro03a,first stage,0.31546487678572877,0.125,1.0
+arguana,test-philosophy-eppphwlrtjs-pro03a,cross-encoder,0.3333333333333333,0.14285714285714285,1.0
+arguana,test-philosophy-eppphwlrtjs-pro03a,Jev V1,0.6309297535714575,0.5,1.0
+arguana,test-philosophy-eppphwlrtjs-pro03a,Jev V2,1.0,1.0,1.0
+arguana,test-philosophy-eppphwlrtjs-pro03a,Jev V3,1.0,1.0,1.0
+arguana,test-philosophy-eppphwlrtjs-pro03a,base (MaxSim@10),0.3010299956639812,,
