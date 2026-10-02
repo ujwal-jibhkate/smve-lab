@@ -356,7 +356,7 @@ We wrote the decision rule *before* looking:
 > SMVE has merit if (a) it beats MUVERA on first-stage recall at equal budget, or
 > (b) on datasets with large headroom, SMVE + MaxSim beats dense + lexical + MaxSim at similar latency.
 
-- **(a) Partly.** On SciFact SMVE wins at equal **storage** (5–10× smaller index) and ties at equal
+- **(a) Partly.** On SciFact SMVE wins at equal **storage** (~5× smaller index at matched recall) and ties at equal
   **latency**. With the setting fixed on SciFact, MUVERA does better on NFCorpus and ArguAna.
 - **(b) Not testable here.** With BGE-M3, none of the three datasets has large headroom. Where there is
   some, SMVE + MaxSim is slightly behind dense + lexical + MaxSim.
