@@ -996,3 +996,104 @@ def plot_router_coefficients(features: list[str], coef: np.ndarray, path: Path) 
     ax.set_xlabel("coefficient on standardised feature")
     _title(ax, "What the logistic router looks at", "blue = more likely to escalate, red = less likely")
     _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# Jev router plots (scripts/evaluate_jev_router.py)
+# ---------------------------------------------------------------------------
+
+JEV_STYLE = {  # name: (colour, line style, width)
+    "oracle": (TEXT, (0, (4, 2)), 1.5), "random": (TEXT_2, (0, (1, 2)), 1.5),
+    "first-stage boosted": (SERIES[1], "-", 2.0), "first-stage logistic": (SERIES[3], "-", 1.6),
+    "Jev B: lower candidate better": (SERIES[6], (0, (6, 2)), 2.2), "Jev B logistic": (SERIES[4], "-", 1.8),
+    "first-stage + Jev B logistic": (SERIES[0], "-", 2.6),
+}
+
+
+def plot_jev_curves(results: dict, show: list[str], path: Path) -> None:
+    """nDCG@10 vs average latency (Jev overhead included) as more queries are escalated."""
+    _style()
+    from smve_lab.datasets import info as ds_info
+    protos = [("A_pooled_cv", "pooled 5-fold CV"), ("B_train_on_scifact", "trained on SciFact train")]
+    sets = list(results["A_pooled_cv"])
+    fig, axes = plt.subplots(2, len(sets), figsize=(5.4 * len(sets), 9), squeeze=False)
+    for i, (proto, ptitle) in enumerate(protos):
+        for j, ds in enumerate(sets):
+            ax, r = axes[i, j], results[proto][ds]
+            for name in show:
+                v = r["routers"][name]
+                c, ls, lw = JEV_STYLE[name]
+                x = r["base_ms"] + v.get("overhead_ms", 0) + np.array(v["curve"]["frac"]) * r["escalate_ms"]
+                ax.plot(x, v["curve"]["ndcg"], color=c, ls=ls, lw=lw, label=name)
+            ax.set_title(f"{ds_info(ds).display}  ·  {ptitle}", loc="left", fontsize=11, fontweight="bold", color=TEXT)
+            if i == 1:
+                ax.set_xlabel("average latency per query, ms (router overhead included)")
+            if j == 0:
+                ax.set_ylabel("nDCG@10")
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4, bbox_to_anchor=(0.5, 0), fontsize=9.5)
+    fig.suptitle("Routing with Jev vs first-stage features  ·  escalate the queries each router flags first",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.95))
+    _save(fig, path)
+
+
+def plot_jev_auc(results: dict, routers: list[str], path: Path) -> None:
+    """AUC with 95% CI per router and test set; trained routers shown for both protocols."""
+    _style()
+    from smve_lab.datasets import info as ds_info
+    sets = list(results["A_pooled_cv"])
+    fig, axes = plt.subplots(1, len(sets), figsize=(5.2 * len(sets), 0.42 * len(routers) + 2.2), sharey=True)
+    y = np.arange(len(routers))[::-1]
+    for ax, ds in zip(axes, sets):
+        for proto, color, dy, lab in (("A_pooled_cv", SERIES[0], 0.14, "pooled CV"),
+                                      ("B_train_on_scifact", SERIES[1], -0.14, "trained on SciFact")):
+            v = [results[proto][ds]["routers"][k] for k in routers]
+            auc = np.array([x["auc"] for x in v])
+            lo = auc - np.array([x["auc_ci95"][0] for x in v])
+            hi = np.array([x["auc_ci95"][1] for x in v]) - auc
+            ax.errorbar(auc, y + dy, xerr=[lo, hi], fmt="o", color=color, ms=5, capsize=0, lw=1.4, label=lab)
+        ax.axvline(0.5, color=TEXT_2, lw=1, ls=(0, (3, 3)))
+        ax.set_title(ds_info(ds).display, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+        ax.set_xlabel("AUC (0.5 = random)")
+        ax.grid(axis="y", visible=False)
+    axes[0].set_yticks(y, routers)
+    axes[0].legend(loc="lower left", fontsize=9)
+    fig.suptitle("How well each router picks the queries where the cross-encoder helps  ·  zero-shot Jev rows are "
+                 "untrained (same value in both protocols)", x=0.02, ha="left", fontsize=13, fontweight="bold",
+                 color=TEXT)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    _save(fig, path)
+
+
+def plot_jev_calibration(data: pd.DataFrame, probs: dict, path: Path, bins: int = 10) -> None:
+    """Reliability per dataset: predicted probability vs observed share where escalation helped."""
+    _style()
+    from smve_lab.datasets import info as ds_info
+    sets = [d for d in ("scifact", "nfcorpus", "arguana")]
+    fig, axes = plt.subplots(1, len(sets), figsize=(5 * len(sets), 5.2), sharey=True)
+    edges = np.linspace(0, 1, bins + 1)
+    colors = [SERIES[6], SERIES[0], SERIES[1]]
+    for ax, ds in zip(axes, sets):
+        m = ((data.dataset == ds) & (data.split == "test")).to_numpy()
+        yv = data["y"].to_numpy()[m]
+        ax.plot([0, 1], [0, 1], color=TEXT_2, lw=1.2, ls=(0, (4, 3)))
+        for (name, p), c in zip(probs.items(), colors):
+            pv = np.clip(p[m], 0, 1)
+            idx = np.clip(np.digitize(pv, edges) - 1, 0, bins - 1)
+            pts = [(pv[idx == b].mean(), yv[idx == b].mean(), (idx == b).sum()) for b in range(bins) if (idx == b).sum() >= 5]
+            if pts:
+                xs, ys, ns = zip(*pts)
+                ax.plot(xs, ys, color=c, lw=2, label=name)
+                ax.scatter(xs, ys, s=np.array(ns) / max(ns) * 160 + 12, color=c, edgecolors=SURFACE, zorder=3)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_title(ds_info(ds).display, loc="left", fontsize=12, fontweight="bold", color=TEXT)
+        ax.set_xlabel("predicted probability")
+    axes[0].set_ylabel("observed share where escalating helped")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, bbox_to_anchor=(0.5, 0), fontsize=9.5)
+    fig.suptitle("Calibration per dataset  ·  dashed = perfectly calibrated  ·  dot size = queries in bin",
+                 x=0.04, ha="left", fontsize=13, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.08, 1, 0.94))
+    _save(fig, path)
