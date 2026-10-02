@@ -914,3 +914,85 @@ def plot_cross_dataset(table: pd.DataFrame, head: pd.DataFrame, path: Path) -> N
                  x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
     fig.tight_layout(rect=(0, 0.07, 1, 0.95))
     _save(fig, path)
+
+
+# ---------------------------------------------------------------------------
+# Router plots (scripts/router_baselines.py)
+# ---------------------------------------------------------------------------
+
+ROUTER_STYLE = {  # name: (colour, line style, width)
+    "oracle": (TEXT, (0, (4, 2)), 1.6), "random": (TEXT_2, (0, (1, 2)), 1.6),
+    "heuristic: small top-2 gap": (SERIES[3], "-", 1.6), "heuristic: dense/lexical disagree": (SERIES[4], "-", 1.6),
+    "logistic": (SERIES[0], "-", 2.4), "boosted": (SERIES[1], "-", 2.4),
+}
+
+
+def plot_router_curves(results: dict, data: pd.DataFrame, lat_all: dict, path: Path) -> None:
+    """Rows = protocol, columns = test set; nDCG@10 vs average latency as more queries are escalated."""
+    _style()
+    protos = [("A_pooled_cv", "pooled 5-fold CV"), ("B_train_on_scifact", "trained on SciFact train")]
+    sets = list(results["A_pooled_cv"])
+    fig, axes = plt.subplots(len(protos), len(sets), figsize=(5.2 * len(sets), 4.4 * len(protos)), squeeze=False)
+    for i, (proto, ptitle) in enumerate(protos):
+        for j, ds in enumerate(sets):
+            ax, r = axes[i, j], results[proto][ds]
+            for name, v in r["routers"].items():
+                c, ls, lw = ROUTER_STYLE[name]
+                x = r["base_ms"] + np.array(v["curve"]["frac"]) * r["escalate_ms"]
+                ax.plot(x, v["curve"]["ndcg"], color=c, ls=ls, lw=lw, label=name)
+            ax.scatter([r["base_ms"], r["base_ms"] + r["escalate_ms"]], [r["never"], r["always"]], color=TEXT,
+                       s=28, zorder=5)
+            from smve_lab.datasets import info as ds_info
+            ax.set_title(f"{ds_info(ds).display}  ·  {ptitle}", loc="left",
+                         fontsize=11, fontweight="bold", color=TEXT)
+            if i == len(protos) - 1:
+                ax.set_xlabel("average latency per query, ms")
+            if j == 0:
+                ax.set_ylabel("nDCG@10")
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=len(labels), bbox_to_anchor=(0.5, 0), fontsize=9.5)
+    fig.suptitle("Routing: escalate the queries a router flags first  ·  left end = never, right end = always",
+                 x=0.04, ha="left", fontsize=14, fontweight="bold", color=TEXT)
+    fig.tight_layout(rect=(0, 0.06, 1, 0.95))
+    _save(fig, path)
+
+
+def plot_router_calibration(data: pd.DataFrame, oof: dict, path: Path, bins: int = 10) -> None:
+    """Reliability diagram: predicted P(escalation helps) vs how often it actually helped."""
+    _style()
+    fig, ax = plt.subplots(figsize=(6.4, 6))
+    ax.plot([0, 1], [0, 1], color=TEXT_2, lw=1.2, ls=(0, (4, 3)), label="perfectly calibrated")
+    edges = np.linspace(0, 1, bins + 1)
+    y = data["y"].to_numpy()
+    for name, p in oof.items():
+        idx = np.clip(np.digitize(p, edges) - 1, 0, bins - 1)
+        xs, ys, ns = [], [], []
+        for b in range(bins):
+            if (idx == b).sum() >= 5:
+                xs.append(p[idx == b].mean()); ys.append(y[idx == b].mean()); ns.append((idx == b).sum())
+        c = ROUTER_STYLE[name][0]
+        ax.plot(xs, ys, color=c, lw=2, label=name)
+        ax.scatter(xs, ys, s=np.array(ns) / max(ns) * 220 + 15, color=c, edgecolors=SURFACE, zorder=3)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("predicted probability that escalating helps")
+    ax.set_ylabel("observed share of queries where it helped")
+    ax.legend(loc="upper left")
+    _title(ax, "Calibration of the learned routers", "pooled 5-fold CV, all datasets  ·  dot size = queries in bin")
+    _save(fig, path)
+
+
+def plot_router_coefficients(features: list[str], coef: np.ndarray, path: Path) -> None:
+    """Standardised logistic-regression weights: positive = pushes toward escalating."""
+    _style()
+    order = np.argsort(np.abs(coef))
+    fig, ax = plt.subplots(figsize=(8.5, 0.38 * len(features) + 1.6))
+    y = np.arange(len(features))
+    c = [DIVERGING_POS if v > 0 else DIVERGING_NEG for v in coef[order]]
+    ax.barh(y, coef[order], color=c, height=0.65, edgecolor=SURFACE)
+    ax.axvline(0, color=TEXT_2, lw=1)
+    ax.set_yticks(y, [features[i] for i in order])
+    ax.grid(axis="y", visible=False)
+    ax.set_xlabel("coefficient on standardised feature")
+    _title(ax, "What the logistic router looks at", "blue = more likely to escalate, red = less likely")
+    _save(fig, path)

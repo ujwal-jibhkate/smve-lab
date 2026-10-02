@@ -34,13 +34,16 @@ class CrossEncoder:
         self.n_params_non_embedding = self.n_params - emb
         self.weight_bytes = sum(p.numel() * p.element_size() for p in self.model.parameters())
 
+    # "longest_first" trims whichever text is longer. With a short query that is
+    # always the document (same as truncating only the document), but it also
+    # handles queries that are themselves near the limit (some ArguAna arguments).
     def _encode(self, queries: list[str], docs: list[str]):
-        return self.tokenizer(queries, docs, truncation="only_second", max_length=self.max_length,
+        return self.tokenizer(queries, docs, truncation="longest_first", max_length=self.max_length,
                               padding=True, return_tensors="pt")
 
     def token_lengths(self, queries: list[str], docs: list[str]) -> np.ndarray:
         """Number of tokens in each (query, doc) input, after truncation."""
-        enc = self.tokenizer(queries, docs, truncation="only_second", max_length=self.max_length)
+        enc = self.tokenizer(queries, docs, truncation="longest_first", max_length=self.max_length)
         return np.array([len(ids) for ids in enc["input_ids"]])
 
     @torch.no_grad()

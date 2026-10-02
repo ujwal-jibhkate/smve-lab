@@ -1,0 +1,30 @@
+{
+  "scifact/test": {
+    "first_stage_ms": 2.893,
+    "maxsim10_ms": 1.7380419885739684,
+    "ce20_ms": 1630.3744789911434,
+    "base_ms": 4.631041988573968,
+    "escalate_extra_ms": 1630.3744789911434
+  },
+  "scifact/train": {
+    "first_stage_ms": 2.893,
+    "maxsim10_ms": 10.021103982580826,
+    "ce20_ms": 1631.689041532809,
+    "base_ms": 12.914103982580826,
+    "escalate_extra_ms": 1631.689041532809
+  },
+  "nfcorpus/test": {
+    "first_stage_ms": 2.06,
+    "maxsim10_ms": 2.8654374764300883,
+    "ce20_ms": 1632.286271022167,
+    "base_ms": 4.925437476430089,
+    "escalate_extra_ms": 1632.286271022167
+  },
+  "arguana/test": {
+    "first_stage_ms": 3.858,
+    "maxsim10_ms": 4.8287085082847625,
+    "ce20_ms": 1680.150270985905,
+    "base_ms": 8.686708508284763,
+    "escalate_extra_ms": 1680.150270985905
+  }
+}
