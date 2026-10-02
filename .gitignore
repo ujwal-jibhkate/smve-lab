@@ -9,3 +9,6 @@ __pycache__/
 # Large, regenerable run outputs (re-create with the evaluate_* scripts)
 results/**/scores.npz
 results/**/run.trec
+
+# Secrets (API keys) - never commit
+.env
